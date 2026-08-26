@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Icons (public/favicon.svg already exists in this repo) -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/favicon.svg" />
+    <meta name="theme-color" content="#f7f8fb" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#04060b" media="(prefers-color-scheme: dark)" />
+
+    <title>P. Maruthi Sreeram | Java Backend &amp; Full-Stack Developer</title>
+    <meta name="description" content="P. Maruthi Sreeram builds practical Java backend systems, Spring Boot APIs, full-stack applications and workflow automations." />
+    <meta name="author" content="P. Maruthi Sreeram" />
+    <meta name="robots" content="index, follow" />
+
+    <!-- Update this to your deployed URL if it changes (also in src/data/personal.ts) -->
+    <link rel="canonical" href="https://maruthi-sreeram-p.github.io/client-portfolio/" />
+
+    <meta property="og:title" content="P. Maruthi Sreeram | Java Backend &amp; Full-Stack Developer" />
+    <meta property="og:description" content="P. Maruthi Sreeram builds practical Java backend systems, Spring Boot APIs, full-stack applications and workflow automations." />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:site_name" content="P. Maruthi Sreeram" />
+    <meta property="og:url" content="https://maruthi-sreeram-p.github.io/client-portfolio/" />
+    <meta property="og:image" content="https://maruthi-sreeram-p.github.io/client-portfolio/og-image.png" />
+    <meta property="og:image:alt" content="P. Maruthi Sreeram — Java Backend & Full-Stack Developer" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="P. Maruthi Sreeram | Java Backend &amp; Full-Stack Developer" />
+    <meta name="twitter:description" content="P. Maruthi Sreeram builds practical Java backend systems, Spring Boot APIs, full-stack applications and workflow automations." />
+    <meta name="twitter:image" content="https://maruthi-sreeram-p.github.io/client-portfolio/og-image.png" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <!--
+      Two families, one request:
+        Sora  — display headings and the monogram
+        Inter — body copy, and the small caption labels
+      Weights are trimmed to exactly what the design system uses. (JetBrains
+      Mono was dropped along with the monospace label treatment — an unused
+      font file is a download nobody benefits from.)
+    -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Inter:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Person",
+        "name": "P. Maruthi Sreeram",
+        "url": "https://maruthi-sreeram-p.github.io/client-portfolio/",
+        "email": "mailto:maruthisreeram864@gmail.com",
+        "jobTitle": "Java Backend & Full-Stack Developer",
+        "description": "Builds practical Java backend systems, Spring Boot APIs, full-stack applications and workflow automations.",
+        "knowsAbout": [
+          "Java",
+          "Spring Boot",
+          "REST APIs",
+          "Distributed Systems",
+          "React",
+          "MySQL",
+          "Apache Kafka"
+        ],
+        "sameAs": [
+          "https://github.com/maruthi-sreeram-p",
+          "https://www.linkedin.com/in/maruthi-sreeram-b57680331/"
+        ]
+      }
+    </script>
+
+    <script>
+      // Applied before first paint so the correct theme is already on <html>
+      // and the page never flashes the wrong background.
+      try {
+        var saved = localStorage.getItem('portfolio-theme');
+        document.documentElement.dataset.theme =
+          saved || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+      } catch (e) {
+        document.documentElement.dataset.theme = 'dark';
+      }
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <noscript>
+      <p style="font-family: system-ui, sans-serif; padding: 2rem; text-align: center">
+        This portfolio needs JavaScript enabled. You can still reach me at
+        <a href="mailto:maruthisreeram864@gmail.com">maruthisreeram864@gmail.com</a>.
+      </p>
+    </noscript>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

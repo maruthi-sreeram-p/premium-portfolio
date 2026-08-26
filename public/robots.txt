@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://maruthi-sreeram-p.github.io/client-portfolio/sitemap.xml
