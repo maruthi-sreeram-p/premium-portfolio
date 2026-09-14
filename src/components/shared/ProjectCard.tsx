@@ -95,17 +95,38 @@ export default function ProjectCard({ project, onOpen, index = 0 }: ProjectCardP
             )}
           </div>
 
-          {/* Title — the card's single control. Two lines, always. */}
-          <h3 className="relative mt-4 h-[1.35em]">
+          {/* Title — the card's single control.
+
+              Where cards sit side by side (lg+) it reserves exactly two lines so
+              every row's subtitles, flows and chips line up. The type size is on
+              the h3 so the em height is in the title's own units (2 lines ×
+              1.25 leading = 2.5em), and titles sit on the bottom of that box: a
+              one-line title keeps the same 8px to its subtitle as a two-line
+              one, and the spare line becomes air under the meta row.
+
+              Below lg the cards stack, so there is no neighbour to align with
+              and the title takes its natural height. A phone is too narrow for
+              the longest title in two lines, and a truncated title is worse
+              than a card one line taller; the 3-line clamp is only a backstop.
+
+              Never pair `block` with `line-clamp-*` — it overrides the clamp's
+              `display: -webkit-box` and silently disables it, which is how a
+              wrapped title once spilled over its subtitle.
+
+              The h3 is deliberately *not* positioned: the button's ::after has
+              to resolve against the card to cover it, and z-10 lifts it over
+              the `relative` text blocks below that would otherwise take the
+              click. */}
+          <h3 className="font-display mt-4 flex items-end text-xl font-bold leading-tight lg:h-[2.5em]">
             <button
               type="button"
               onClick={() => onOpen(project)}
               data-cursor
               data-cursor-label="View project"
-              className="text-left after:absolute after:inset-0 after:content-['']"
+              className="w-full text-left after:absolute after:inset-0 after:z-10 after:content-['']"
               aria-label={`View details for ${project.title}`}
             >
-              <span className="font-display line-clamp-1 block text-xl font-bold leading-tight text-[var(--fg)] transition-transform duration-500 group-hover:translate-x-1">
+              <span className="line-clamp-3 text-[var(--fg)] transition-transform duration-500 group-hover:translate-x-1 lg:line-clamp-2">
                 {project.title}
               </span>
             </button>
@@ -115,7 +136,9 @@ export default function ProjectCard({ project, onOpen, index = 0 }: ProjectCardP
             {project.subtitle}
           </p>
 
-          <p className="relative mt-3 line-clamp-2 h-[2.7rem] text-sm leading-relaxed text-[var(--fg-soft)]">
+          {/* 2 lines × 1.625 leading = 3.25em, in the paragraph's own units. A
+              fixed 2.7rem was 2.3px short of two lines and shaved descenders. */}
+          <p className="relative mt-3 line-clamp-2 h-[3.25em] text-sm leading-relaxed text-[var(--fg-soft)]">
             {project.approach}
           </p>
 

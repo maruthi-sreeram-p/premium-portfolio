@@ -218,7 +218,7 @@ practice and simply read as nothing.
 
 ## Gotchas worth knowing
 
-Five things in here look wrong until you know why:
+These look wrong until you know why:
 
 - **No `--color-*` tokens in `@theme`.** Tailwind v4 generates a utility per
   colour token; `--color-base` produced a *colour* utility named `text-base`
@@ -248,6 +248,10 @@ Five things in here look wrong until you know why:
 - **The curved sections must not carry `preserve-3d`.** They are flat planes
   being tilted, not 3D scenes; preserve-3d would rasterise their entire
   subtrees, on sections several thousand pixels tall.
+- **Never pair `block` with `line-clamp-*`.** The clamp only works while the
+  element is `display: -webkit-box`; a `block` class beside it overrides that
+  and the "clamped" text wraps freely. That is how a long project title once
+  painted straight over its own subtitle.
 
 ## Project cards are deliberately uniform
 
@@ -263,6 +267,12 @@ down to three items each; two-up gives ~580px, where both fit on a single row.
 The phone layout still needs two rows, which is why those heights are
 responsive (`h-[4.25rem] md:h-[2.15rem]`). Changing the column count means
 re-measuring both.
+
+The title is the one region that is only fixed from `lg` up, where cards sit
+side by side: there it gets a two-line box, bottom-aligned so the gap to the
+subtitle is the same on every card. Below `lg` the cards stack, there is no
+neighbour to line up with, and the longest title needs three lines on a phone —
+so it takes its natural height rather than being truncated.
 
 This is all load-bearing. The projects themselves vary (flows of three to six
 steps, tech lists of three to six, some with a public repo and some without),
