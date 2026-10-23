@@ -163,8 +163,8 @@ export default function Hero({ ready }: HeroProps) {
             <Button variant="primary" onClick={() => scrollToSection('projects')} showArrow>
               View my work
             </Button>
-            <Button variant="secondary" onClick={() => scrollToSection('contact')}>
-              Have a project?
+            <Button variant="secondary" onClick={() => scrollToSection('services')}>
+              Hire me
             </Button>
             <Button
               variant="ghost"
