@@ -583,65 +583,6 @@
   box-shadow: 0 0 10px color-mix(in srgb, var(--accent) 78%, transparent);
 }
 
-/* -- Project dialog --------------------------------------------------------
-   Native <dialog>, so focus trapping, Escape and top-layer stacking come from
-   the platform. The transition uses @starting-style + allow-discrete, which
-   animates in and out of `display: none` with no JS at all. */
-.project-dialog {
-  width: min(64rem, calc(100vw - 2rem));
-  max-width: none;
-  max-height: 86vh;
-  padding: 0;
-  border: 1px solid var(--card-border);
-  border-radius: 0.75rem;
-  background: var(--card-solid);
-  color: var(--fg);
-  overflow: visible;
-  box-shadow:
-    0 24px 80px -20px rgb(0 0 0 / 0.6),
-    0 0 0 1px color-mix(in srgb, var(--accent) 8%, transparent);
-
-  opacity: 0;
-  transform: translateY(14px) scale(0.985);
-  transition:
-    opacity 320ms var(--ease-out-quint),
-    transform 320ms var(--ease-out-quint),
-    overlay 320ms allow-discrete,
-    display 320ms allow-discrete;
-}
-
-.project-dialog[open] {
-  opacity: 1;
-  transform: none;
-}
-
-@starting-style {
-  .project-dialog[open] {
-    opacity: 0;
-    transform: translateY(14px) scale(0.985);
-  }
-}
-
-.project-dialog::backdrop {
-  background: color-mix(in srgb, var(--shell) 78%, transparent);
-  backdrop-filter: blur(6px);
-  opacity: 0;
-  transition:
-    opacity 320ms var(--ease-out-quint),
-    overlay 320ms allow-discrete,
-    display 320ms allow-discrete;
-}
-
-.project-dialog[open]::backdrop {
-  opacity: 1;
-}
-
-@starting-style {
-  .project-dialog[open]::backdrop {
-    opacity: 0;
-  }
-}
-
 /* -- 3D context ------------------------------------------------------------
    `tilt-scene` establishes the perspective; `tilt-card` opts a child into
    preserving it. Both the scroll-in tilt and the hover tilt use these. */

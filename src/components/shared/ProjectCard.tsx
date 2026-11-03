@@ -1,3 +1,4 @@
+import { motion } from 'framer-motion';
 import { ArrowUpRight } from 'lucide-react';
 import type { Project } from '../../data/projects';
 import { GithubIcon } from './SocialIcons';
@@ -9,6 +10,8 @@ interface ProjectCardProps {
   onOpen: (project: Project) => void;
   /** Position in the grid, used to stagger the entrance. */
   index?: number;
+  /** Skip the entrance — the card is returning, not arriving. */
+  instant?: boolean;
 }
 
 /*
@@ -51,7 +54,7 @@ const MAX_FLOW = 4;
  * sees exactly one clearly-labelled control. The repo link is raised above that
  * overlay so it stays independently reachable.
  */
-export default function ProjectCard({ project, onOpen, index = 0 }: ProjectCardProps) {
+export default function ProjectCard({ project, onOpen, index = 0, instant = false }: ProjectCardProps) {
   const accent = `var(--${project.accent})`;
   const isFlagship = project.priority === 'flagship';
 
@@ -64,11 +67,20 @@ export default function ProjectCard({ project, onOpen, index = 0 }: ProjectCardP
 
   return (
     <article className="tilt-scene h-full">
-      <CardReveal accent={accent} delay={Math.min(index * 0.06, 0.3)} className="h-full">
+      <CardReveal accent={accent} delay={Math.min(index * 0.06, 0.3)} className="h-full" instant={instant}>
         <div
-          className="surface group relative flex h-full flex-col overflow-hidden rounded-xl p-6 transition-[border-color,box-shadow] duration-300 hover:border-[var(--rule-strong)] sm:p-7"
+          className="group relative isolate flex h-full flex-col p-6 sm:p-7"
           style={{ ['--card-accent' as string]: accent }}
         >
+          {/* The card's background, as its own empty element. When the project
+              opens, this is what grows into the detail view's header panel
+              (same layoutId) — empty, so nothing inside it is stretched. */}
+          <motion.span
+            layoutId={`project-shell-${project.id}`}
+            aria-hidden="true"
+            className="surface absolute inset-0 -z-10 transition-colors duration-300 group-hover:border-[var(--rule-strong)]"
+            style={{ borderRadius: 12 }}
+          />
           {/* Accent edge — the card's identity colour, lit on hover. */}
           <span
             aria-hidden="true"
@@ -118,6 +130,7 @@ export default function ProjectCard({ project, onOpen, index = 0 }: ProjectCardP
             <button
               type="button"
               onClick={() => onOpen(project)}
+              data-project-trigger={project.id}
               data-cursor
               data-cursor-label="View project"
               className="w-full text-left after:absolute after:inset-0 after:z-10 after:content-['']"

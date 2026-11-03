@@ -95,6 +95,16 @@ export function scrollToSection(id: string) {
   window.scrollTo({ top, behavior: reduced ? 'auto' : 'smooth' });
 }
 
+/** Scroll to an absolute offset — used to return to where a view was left. */
+export function scrollToPosition(top: number) {
+  if (lenis) {
+    lenis.scrollTo(top, { duration: 0.9 });
+    return;
+  }
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  window.scrollTo({ top, behavior: reduced ? 'auto' : 'smooth' });
+}
+
 /** Scroll back to the very top (logo click). */
 export function scrollToTop() {
   if (lenis) {

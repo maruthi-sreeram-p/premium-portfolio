@@ -9,6 +9,8 @@ interface CardRevealProps {
   /** Colour the edge draws in. */
   accent?: string;
   delay?: number;
+  /** Skip the entrance — for cards that return after a project was closed. */
+  instant?: boolean;
 }
 
 /**
@@ -32,10 +34,11 @@ export default function CardReveal({
   className = '',
   accent = 'var(--accent)',
   delay = 0,
+  instant = false,
 }: CardRevealProps) {
   const { prefersReducedMotion } = useDeviceTier();
 
-  if (prefersReducedMotion) {
+  if (prefersReducedMotion || instant) {
     return <div className={className}>{children}</div>;
   }
 
