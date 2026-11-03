@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import { ArrowUpRight } from 'lucide-react';
 import type { Project } from '../../data/projects';
+import { useTilt } from '../../hooks/useTilt';
 import { GithubIcon } from './SocialIcons';
 import ArchitectureFlow from './ArchitectureFlow';
 import CardReveal from '../fx/CardReveal';
@@ -12,6 +13,12 @@ interface ProjectCardProps {
   index?: number;
   /** Skip the entrance — the card is returning, not arriving. */
   instant?: boolean;
+  /**
+   * False for a repeated copy of the card (the looping band shows each project
+   * twice): it must not claim the layout id or the focus-return hook that the
+   * real card owns.
+   */
+  primary?: boolean;
 }
 
 /*
@@ -54,7 +61,16 @@ const MAX_FLOW = 4;
  * sees exactly one clearly-labelled control. The repo link is raised above that
  * overlay so it stays independently reachable.
  */
-export default function ProjectCard({ project, onOpen, index = 0, instant = false }: ProjectCardProps) {
+export default function ProjectCard({
+  project,
+  onOpen,
+  index = 0,
+  instant = false,
+  primary = true,
+}: ProjectCardProps) {
+  // The card turns toward the pointer and lifts a little. Fine-pointer devices
+  // only (the hook checks), and the cursor glow is off — rotation alone.
+  const tiltRef = useTilt<HTMLDivElement>({ max: 8, lift: 14, trackSpotlight: false });
   const accent = `var(--${project.accent})`;
   const isFlagship = project.priority === 'flagship';
 
@@ -69,18 +85,27 @@ export default function ProjectCard({ project, onOpen, index = 0, instant = fals
     <article className="tilt-scene h-full">
       <CardReveal accent={accent} delay={Math.min(index * 0.06, 0.3)} className="h-full" instant={instant}>
         <div
-          className="group relative isolate flex h-full flex-col p-6 sm:p-7"
+          ref={tiltRef}
+          className="tilt-card group relative isolate flex h-full flex-col p-6 sm:p-7"
           style={{ ['--card-accent' as string]: accent }}
         >
           {/* The card's background, as its own empty element. When the project
               opens, this is what grows into the detail view's header panel
               (same layoutId) — empty, so nothing inside it is stretched. */}
-          <motion.span
-            layoutId={`project-shell-${project.id}`}
-            aria-hidden="true"
-            className="surface absolute inset-0 -z-10 transition-colors duration-300 group-hover:border-[var(--rule-strong)]"
-            style={{ borderRadius: 12 }}
-          />
+          {primary ? (
+            <motion.span
+              layoutId={`project-shell-${project.id}`}
+              aria-hidden="true"
+              className="surface absolute inset-0 -z-10 transition-colors duration-300 group-hover:border-[var(--rule-strong)]"
+              style={{ borderRadius: 12 }}
+            />
+          ) : (
+            <span
+              aria-hidden="true"
+              className="surface absolute inset-0 -z-10 transition-colors duration-300 group-hover:border-[var(--rule-strong)]"
+              style={{ borderRadius: 12 }}
+            />
+          )}
           {/* Accent edge — the card's identity colour, lit on hover. */}
           <span
             aria-hidden="true"
@@ -130,7 +155,7 @@ export default function ProjectCard({ project, onOpen, index = 0, instant = fals
             <button
               type="button"
               onClick={() => onOpen(project)}
-              data-project-trigger={project.id}
+              data-project-trigger={primary ? project.id : undefined}
               data-cursor
               data-cursor-label="View project"
               className="w-full text-left after:absolute after:inset-0 after:z-10 after:content-['']"
@@ -169,7 +194,7 @@ export default function ProjectCard({ project, onOpen, index = 0, instant = fals
           </div>
 
           {/* Tech — capped for the same reason. */}
-          <ul className="relative mt-4 flex h-[4rem] flex-wrap gap-1.5 overflow-hidden md:h-[1.9rem]">
+          <ul className="relative mt-4 flex h-[4rem] flex-wrap content-start items-start gap-1.5 overflow-hidden md:h-[1.9rem]">
             {shownTech.map((tech) => (
               <li
                 key={tech}

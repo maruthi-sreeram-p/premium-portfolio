@@ -509,7 +509,8 @@
   animation-iteration-count: infinite;
 }
 
-.marquee:hover .marquee-track {
+.marquee:hover .marquee-track,
+.marquee:has(:focus-visible) .marquee-track {
   animation-play-state: paused;
 }
 

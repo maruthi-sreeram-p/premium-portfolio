@@ -6,6 +6,8 @@ import SectionHeading from '../shared/SectionHeading';
 import Reveal from '../shared/Reveal';
 import ProjectCard from '../shared/ProjectCard';
 import ProjectDetail from '../shared/ProjectDetail';
+import ProjectConveyor from '../shared/ProjectConveyor';
+import { useDeviceTier } from '../../hooks/useDeviceTier';
 import { EASE_OUT_QUINT } from '../../lib/motion';
 import { CLOSE_PROJECT_EVENT, scrollToPosition } from '../../lib/scroll';
 import { ScrollTrigger } from '../../lib/gsap';
@@ -24,6 +26,7 @@ const FILTERS: Filter[] = [
 ];
 
 export default function Projects({ onOpenChange }: ProjectsProps) {
+  const { prefersReducedMotion } = useDeviceTier();
   const [filter, setFilter] = useState<Filter>('All');
   const [selected, setSelected] = useState<Project | null>(null);
   // Once a project has been opened, cards coming back should simply be there:
@@ -149,32 +152,35 @@ export default function Projects({ onOpenChange }: ProjectsProps) {
               </div>
             </Reveal>
 
-            {/* Two per row on desktop, one below it. Every card is the same
-                width, and because ProjectCard fixes the height of each region,
-                the same height. Flagship work is marked with a pill rather than
-                a wider cell. */}
-            <motion.ul layout className="mt-12 grid grid-cols-1 gap-5 lg:grid-cols-2">
-              <AnimatePresence mode="popLayout">
-                {visible.map((project, i) => (
-                  <motion.li
-                    key={project.id}
-                    layout
-                    // The card's own entrance lives in CardReveal; this element
-                    // only owns filter behaviour — repositioning via `layout`,
-                    // and the exit when a card is filtered out.
-                    exit={{ opacity: 0, y: -12, transition: { duration: 0.2 } }}
-                    transition={{ duration: 0.45, ease: EASE_OUT_QUINT }}
-                  >
-                    <ProjectCard
-                      project={project}
-                      onOpen={open}
-                      index={i}
-                      instant={hasOpened}
-                    />
-                  </motion.li>
-                ))}
-              </AnimatePresence>
-            </motion.ul>
+            {prefersReducedMotion ? (
+              /* Visitors who ask for less motion get a still grid instead of
+                 the moving band: two per row on desktop, one below it. */
+              <motion.ul layout className="mt-12 grid grid-cols-1 gap-5 lg:grid-cols-2">
+                <AnimatePresence mode="popLayout">
+                  {visible.map((project, i) => (
+                    <motion.li
+                      key={project.id}
+                      layout
+                      exit={{ opacity: 0, y: -12, transition: { duration: 0.2 } }}
+                      transition={{ duration: 0.45, ease: EASE_OUT_QUINT }}
+                    >
+                      <ProjectCard
+                        project={project}
+                        onOpen={open}
+                        index={i}
+                        instant={hasOpened}
+                      />
+                    </motion.li>
+                  ))}
+                </AnimatePresence>
+              </motion.ul>
+            ) : (
+              // Keyed on the filter so changing it restarts the band cleanly
+              // rather than re-measuring a loop that is mid-way along.
+              <div className="mt-6">
+                <ProjectConveyor key={filter} projects={visible} onOpen={open} />
+              </div>
+            )}
           </motion.div>
         )}
       </AnimatePresence>
