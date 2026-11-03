@@ -1,4 +1,3 @@
-import { useRef } from 'react';
 import { motion } from 'framer-motion';
 import { Download } from 'lucide-react';
 import { personal } from '../../data/personal';
@@ -8,7 +7,6 @@ import SystemDiagram from '../fx/SystemDiagram';
 import TypeText from '../fx/TypeText';
 import { EASE_OUT_EXPO, EASE_OUT_QUINT } from '../../lib/motion';
 import { scrollToSection } from '../../lib/scroll';
-import { CURVE_PERSPECTIVE, useCurvedScroll } from '../../hooks/useCurvedScroll';
 
 interface HeroProps {
   /** Held false until the boot overlay finishes, so the two never overlap. */
@@ -54,21 +52,13 @@ function HeadlineLine({
 }
 
 export default function Hero({ ready }: HeroProps) {
-  const sectionRef = useRef<HTMLElement>(null);
-  const innerRef = useRef<HTMLDivElement>(null);
-  // The hero sits on the same curved surface as every section, so the effect
-  // is visible from the very first scroll rather than only once About arrives.
-  const curved = useCurvedScroll(sectionRef, innerRef);
-
   return (
     <section
-      ref={sectionRef}
       id="top"
       className="relative flex min-h-[100svh] flex-col justify-center pt-24 pb-12 md:pt-28"
       aria-label="Introduction"
-      style={curved ? { perspective: CURVE_PERSPECTIVE } : undefined}
     >
-      <div ref={innerRef}>
+      <div>
       <Container className="relative w-full">
         {/*
           No graphic beside the copy, deliberately.
