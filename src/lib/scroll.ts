@@ -3,6 +3,9 @@ import { gsap, ScrollTrigger } from './gsap';
 
 let lenis: Lenis | null = null;
 
+/** Dispatched on `window` when navigation needs the open project closed. */
+export const CLOSE_PROJECT_EVENT = 'portfolio:close-project';
+
 /**
  * Start Lenis and bind it to GSAP's ticker and ScrollTrigger.
  *
@@ -78,9 +81,18 @@ export function setScrollLocked(locked: boolean) {
  * Scroll to a section by id. Uses Lenis when it is driving, native smooth
  * scrolling otherwise, and an instant jump under reduced-motion.
  */
-export function scrollToSection(id: string) {
+export function scrollToSection(id: string, retried = false) {
   const target = document.getElementById(id.replace(/^#/, ''));
   if (!target) return;
+
+  // A section can be hidden while a project is open. Ask for it to be closed,
+  // then try again once the page has laid out again — scrolling to a hidden
+  // element would land at the top of the page.
+  if (target.offsetParent === null && !retried) {
+    window.dispatchEvent(new Event(CLOSE_PROJECT_EVENT));
+    requestAnimationFrame(() => requestAnimationFrame(() => scrollToSection(id, true)));
+    return;
+  }
 
   // Offset for the fixed header so the section heading is not tucked under it.
   const offset = window.innerWidth < 768 ? -64 : -80;
@@ -95,14 +107,21 @@ export function scrollToSection(id: string) {
   window.scrollTo({ top, behavior: reduced ? 'auto' : 'smooth' });
 }
 
-/** Scroll to an absolute offset — used to return to where a view was left. */
-export function scrollToPosition(top: number) {
+/**
+ * Scroll to an absolute offset — used to return to where a view was left.
+ * `immediate` jumps without easing, for when the page's content has just been
+ * swapped and a glide would only scroll through the wrong layout.
+ */
+export function scrollToPosition(top: number, immediate = false) {
   if (lenis) {
-    lenis.scrollTo(top, { duration: 0.9 });
+    // Lenis measures the page asynchronously. After a swap of content it still
+    // holds the old length as its limit and would clamp the jump to it.
+    if (immediate) lenis.resize();
+    lenis.scrollTo(top, immediate ? { immediate: true } : { duration: 0.9 });
     return;
   }
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  window.scrollTo({ top, behavior: reduced ? 'auto' : 'smooth' });
+  window.scrollTo({ top, behavior: immediate || reduced ? 'auto' : 'smooth' });
 }
 
 /** Scroll back to the very top (logo click). */

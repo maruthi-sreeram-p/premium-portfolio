@@ -25,6 +25,9 @@ const MARQUEE_ITEMS = [
 
 export default function App() {
   const { isTouch, prefersReducedMotion } = useDeviceTier();
+  // An open project takes over the page: every other section is hidden (not
+  // unmounted, so scroll-driven state survives) until it is closed.
+  const [projectOpen, setProjectOpen] = useState(false);
 
   const [theme, setTheme] = useState<Theme>(() =>
     document.documentElement.dataset.theme === 'light' ? 'light' : 'dark',
@@ -83,24 +86,28 @@ export default function App() {
       <Header theme={theme} onToggleTheme={toggleTheme} />
 
       <main id="main">
-        <Hero ready />
+        <div hidden={projectOpen}>
+          <Hero ready />
 
-        {/* A scrolling headline band between the hero and the first section —
-            it carries the stack at display size and doubles as the seam
-            between the two. */}
-        <div className="border-y py-8 md:py-10" style={{ borderColor: 'var(--rule)' }}>
-          <Marquee items={MARQUEE_ITEMS} />
+          {/* A scrolling headline band between the hero and the first section —
+              it carries the stack at display size and doubles as the seam
+              between the two. */}
+          <div className="border-y py-8 md:py-10" style={{ borderColor: 'var(--rule)' }}>
+            <Marquee items={MARQUEE_ITEMS} />
+          </div>
+
+          <About />
+          <Skills />
         </div>
-
-        <About />
-        <Skills />
-        <Projects />
-        <Experience />
-        <Services />
-        <Contact />
+        <Projects onOpenChange={setProjectOpen} />
+        <div hidden={projectOpen}>
+          <Experience />
+          <Services />
+          <Contact />
+        </div>
       </main>
 
-      <Footer />
+      {!projectOpen && <Footer />}
     </MotionConfig>
   );
 }

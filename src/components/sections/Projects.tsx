@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { projects, type Project, type ProjectCategory } from '../../data/projects';
 import SectionWrapper from '../layout/SectionWrapper';
@@ -7,7 +7,13 @@ import Reveal from '../shared/Reveal';
 import ProjectCard from '../shared/ProjectCard';
 import ProjectDetail from '../shared/ProjectDetail';
 import { EASE_OUT_QUINT } from '../../lib/motion';
-import { scrollToPosition, scrollToSection } from '../../lib/scroll';
+import { CLOSE_PROJECT_EVENT, scrollToPosition } from '../../lib/scroll';
+import { ScrollTrigger } from '../../lib/gsap';
+
+interface ProjectsProps {
+  /** Tells the page when a project is open, so it can hide everything else. */
+  onOpenChange?: (open: boolean) => void;
+}
 
 type Filter = 'All' | ProjectCategory;
 
@@ -17,7 +23,7 @@ const FILTERS: Filter[] = [
   ...Array.from(new Set(projects.map((p) => p.category))),
 ];
 
-export default function Projects() {
+export default function Projects({ onOpenChange }: ProjectsProps) {
   const [filter, setFilter] = useState<Filter>('All');
   const [selected, setSelected] = useState<Project | null>(null);
   // Once a project has been opened, cards coming back should simply be there:
@@ -37,24 +43,41 @@ export default function Projects() {
     lastTrigger.current = project.id;
     setHasOpened(true);
     setSelected(project);
-    // The detail view replaces the grid, so bring the top of it into view while
-    // the card is still growing into it.
-    scrollToSection('projects');
-  }, []);
+    onOpenChange?.(true);
+  }, [onOpenChange]);
 
   const close = useCallback(() => {
     setSelected(null);
-    scrollToPosition(returnY.current);
-  }, []);
+    onOpenChange?.(false);
+  }, [onOpenChange]);
 
-  // Escape closes, like the dialog this replaced.
+  // An open project takes over the page — the rest of it is hidden — so the
+  // document is a different length the moment `selected` changes. Move the
+  // scroll position in the same frame, before paint: to the top when a project
+  // opens, and back to where the visitor was when it closes. The first run is
+  // the initial mount, which must not scroll anywhere.
+  const mounted = useRef(false);
+  useLayoutEffect(() => {
+    if (!mounted.current) {
+      mounted.current = true;
+      return;
+    }
+    scrollToPosition(selected ? 0 : returnY.current, true);
+    ScrollTrigger.refresh();
+  }, [selected]);
+
+  // Escape closes, and so does navigating to another section.
   useEffect(() => {
     if (!selected) return;
     const onKey = (event: KeyboardEvent) => {
       if (event.key === 'Escape') close();
     };
     window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
+    window.addEventListener(CLOSE_PROJECT_EVENT, close);
+    return () => {
+      window.removeEventListener('keydown', onKey);
+      window.removeEventListener(CLOSE_PROJECT_EVENT, close);
+    };
   }, [selected, close]);
 
   // Hand focus back to the card that opened the project.
