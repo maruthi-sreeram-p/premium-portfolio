@@ -170,7 +170,7 @@ export default function Header({ theme, onToggleTheme }: HeaderProps) {
             <button
               type="button"
               onClick={() => scrollToSection('contact')}
-              className="energy-ring hidden rounded-md px-4 py-2 text-[0.8125rem] font-semibold text-[var(--shell)] sm:block"
+              className="hidden rounded-md px-4 py-2 text-[0.8125rem] font-semibold text-[var(--shell)] sm:block"
               style={{ background: 'var(--accent)' }}
             >
               Get in touch

@@ -36,12 +36,13 @@ export const CURVE_PERSPECTIVE = 1200;
  *
  * @param outer the element whose scroll position drives the curve
  * @param inner the element the transform is applied to
- * @param enabled caller-side opt-out
+ * @param enabled opt-in. Off by default: the zinc theme keeps sections flat,
+ *   and a caller can pass `true` to bring the curve back.
  */
 export function useCurvedScroll(
   outer: RefObject<HTMLElement | null>,
   inner: RefObject<HTMLElement | null>,
-  enabled = true,
+  enabled = false,
 ) {
   const { prefersReducedMotion, tier } = useDeviceTier();
   const active = enabled && !prefersReducedMotion && tier !== 'low';

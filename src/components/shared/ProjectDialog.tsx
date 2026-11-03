@@ -179,7 +179,7 @@ export default function ProjectDialog({ project, onClose }: ProjectDialogProps) 
                   href={project.github}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="energy-ring inline-flex items-center gap-2 rounded-md border px-5 py-2.5 text-sm font-medium text-[var(--fg)] transition-colors duration-300 hover:border-[var(--accent)]"
+                  className="inline-flex items-center gap-2 rounded-md border px-5 py-2.5 text-sm font-medium text-[var(--fg)] transition-colors duration-300 hover:border-[var(--accent)]"
                 >
                   <GithubIcon className="h-4 w-4" />
                   View source
@@ -190,7 +190,7 @@ export default function ProjectDialog({ project, onClose }: ProjectDialogProps) 
                   href={project.live}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="energy-ring inline-flex items-center gap-2 rounded-md px-5 py-2.5 text-sm font-semibold text-[var(--shell)]"
+                  className="inline-flex items-center gap-2 rounded-md px-5 py-2.5 text-sm font-semibold text-[var(--shell)]"
                   style={{ background: 'var(--accent)' }}
                 >
                   Live demo

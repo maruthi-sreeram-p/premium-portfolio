@@ -112,7 +112,7 @@ export default function Hero({ ready }: HeroProps) {
           {/* 2 — headline */}
           <h1
             aria-label={`${personal.headline.join(' ')}.`}
-            className="mt-7 text-[clamp(2.25rem,5vw,3.9rem)] font-extrabold uppercase leading-[1.02] tracking-[-0.032em] text-[var(--fg)]"
+            className="mt-7 text-[clamp(2.25rem,5vw,3.9rem)] font-bold leading-[1.05] tracking-[-0.03em] text-[var(--fg)]"
           >
             <HeadlineLine text={personal.headline[0]} delay={0.24} ready={ready} />
             <HeadlineLine text={personal.headline[1]} delay={0.36} ready={ready} />

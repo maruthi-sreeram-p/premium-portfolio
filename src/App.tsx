@@ -3,9 +3,6 @@ import { MotionConfig } from 'framer-motion';
 import Header from './components/layout/Header';
 import Footer from './components/layout/Footer';
 import Backdrop from './components/fx/Backdrop';
-import AmbientField from './components/fx/AmbientField';
-import CursorLayer from './components/fx/CursorLayer';
-import BootSequence from './components/fx/BootSequence';
 import Marquee from './components/fx/Marquee';
 import Hero from './components/sections/Hero';
 import About from './components/sections/About';
@@ -28,7 +25,6 @@ const MARQUEE_ITEMS = [
 
 export default function App() {
   const { isTouch, prefersReducedMotion } = useDeviceTier();
-  const [ready, setReady] = useState(false);
 
   const [theme, setTheme] = useState<Theme>(() =>
     document.documentElement.dataset.theme === 'light' ? 'light' : 'dark',
@@ -48,11 +44,6 @@ export default function App() {
     () => setTheme((current) => (current === 'dark' ? 'light' : 'dark')),
     [],
   );
-
-  // Stable identity: BootSequence's effect owns the scroll lock, so a new
-  // callback on every App render would tear that effect down and rebuild it
-  // mid-boot.
-  const handleBootComplete = useCallback(() => setReady(true), []);
 
   /* -- Smooth scroll ------------------------------------------------------ */
   useEffect(() => {
@@ -88,16 +79,11 @@ export default function App() {
     // arrives softly instead of either sliding or snapping.
     <MotionConfig reducedMotion="user">
       <Backdrop />
-      {/* Mounted once, above the CSS backdrop and behind all content, so the
-          whole document scrolls past a single rotating 3D field. */}
-      <AmbientField />
-      <CursorLayer />
-      <BootSequence onComplete={handleBootComplete} />
 
       <Header theme={theme} onToggleTheme={toggleTheme} />
 
       <main id="main">
-        <Hero ready={ready} />
+        <Hero ready />
 
         {/* A scrolling headline band between the hero and the first section —
             it carries the stack at display size and doubles as the seam

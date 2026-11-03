@@ -1,9 +1,10 @@
 @import "tailwindcss";
 
 /* ============================================================================
-   DESIGN SYSTEM — "Signal"
-   A dark-first system for a backend engineer's portfolio. Restrained and
-   editorial: deep navy ground, one accent family, generous whitespace.
+   DESIGN SYSTEM — "Zinc"
+   A dark-first, monochrome system for a backend engineer's portfolio. Quiet
+   and formal: near-black zinc ground, hairline borders, Inter throughout, no
+   hue accent.
    ========================================================================== */
 
 /*
@@ -17,7 +18,7 @@
   consumed as `text-[var(--fg)]`, which cannot collide with anything.
 */
 @theme {
-  --font-display: Sora, ui-sans-serif, system-ui, sans-serif;
+  --font-display: Inter, ui-sans-serif, system-ui, -apple-system, sans-serif;
   --font-sans: Inter, ui-sans-serif, system-ui, -apple-system, sans-serif;
 
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
@@ -33,53 +34,55 @@
 :root[data-theme="dark"] {
   color-scheme: dark;
 
-  --shell: #04060b;
-  --card: rgba(18, 26, 43, 0.72);
-  --card-solid: #0c111d;
-  --card-border: rgba(77, 159, 255, 0.12);
+  --shell: #09090b;
+  --card: rgba(255, 255, 255, 0.025);
+  --card-solid: #0e0e11;
+  --card-border: rgba(255, 255, 255, 0.09);
 
-  --rule: rgba(255, 255, 255, 0.07);
-  --rule-strong: rgba(255, 255, 255, 0.14);
+  --rule: rgba(255, 255, 255, 0.08);
+  --rule-strong: rgba(255, 255, 255, 0.15);
 
-  --fg: #e9eefb;
-  --fg-soft: #98a4bd;
-  --fg-faint: #8794ad;
+  --fg: #fafafa;
+  --fg-soft: #a1a1aa;
+  --fg-faint: #8a8a93;
 
-  --accent: #4d9fff;
-  --accent-2: #34e2e8;
-  --accent-3: #8b6cf6;
-  --ember: #ff6b35;
+  /* Monochrome: the accent family is a ladder of zinc greys, so anything lit
+     "in the accent" reads as a quiet step up in brightness, not a hue. */
+  --accent: #fafafa;
+  --accent-2: #d4d4d8;
+  --accent-3: #a1a1aa;
+  --ember: #e4e4e7;
 
-  /* Master dial for the cinematic layer. Light turns it down, reduced-motion
+  /* Master dial for the effects layer. Light turns it down, reduced-motion
      switches it off entirely. */
-  --vfx: 1;
-  --grid-opacity: 0.04;
-  --glow-strength: 1;
+  --vfx: 0.3;
+  --grid-opacity: 0;
+  --glow-strength: 0.25;
 }
 
 :root[data-theme="light"] {
   color-scheme: light;
 
-  --shell: #f7f8fb;
-  --card: rgba(255, 255, 255, 0.86);
+  --shell: #ffffff;
+  --card: rgba(9, 9, 11, 0.015);
   --card-solid: #ffffff;
-  --card-border: rgba(15, 32, 62, 0.1);
+  --card-border: #e4e4e7;
 
-  --rule: rgba(12, 22, 40, 0.09);
-  --rule-strong: rgba(12, 22, 40, 0.16);
+  --rule: #e4e4e7;
+  --rule-strong: #d4d4d8;
 
-  --fg: #0b1220;
-  --fg-soft: #4a5670;
-  --fg-faint: #616b80;
+  --fg: #09090b;
+  --fg-soft: #52525b;
+  --fg-faint: #71717a;
 
-  --accent: #1d5fb8;
-  --accent-2: #0a6f75;
-  --accent-3: #6d4ddb;
-  --ember: #b8400f;
+  --accent: #18181b;
+  --accent-2: #3f3f46;
+  --accent-3: #71717a;
+  --ember: #52525b;
 
-  --vfx: 0.35;
-  --grid-opacity: 0.05;
-  --glow-strength: 0.3;
+  --vfx: 0.2;
+  --grid-opacity: 0;
+  --glow-strength: 0.2;
 }
 
 @layer base {
@@ -236,7 +239,10 @@
     almost indistinguishable and costs nothing.
   */
   .surface {
-    background: var(--card);
+    /* A faint top-down sheen over the flat fill — the one bit of depth. */
+    background:
+      linear-gradient(180deg, color-mix(in srgb, var(--fg) 3.5%, transparent), transparent 70%),
+      var(--card);
     border: 1px solid var(--card-border);
   }
 

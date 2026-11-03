@@ -1,6 +1,5 @@
 import { ArrowUpRight } from 'lucide-react';
 import type { Project } from '../../data/projects';
-import { useTilt } from '../../hooks/useTilt';
 import { GithubIcon } from './SocialIcons';
 import ArchitectureFlow from './ArchitectureFlow';
 import CardReveal from '../fx/CardReveal';
@@ -53,7 +52,6 @@ const MAX_FLOW = 4;
  * overlay so it stays independently reachable.
  */
 export default function ProjectCard({ project, onOpen, index = 0 }: ProjectCardProps) {
-  const tiltRef = useTilt<HTMLDivElement>({ max: 4.5, lift: 8 });
   const accent = `var(--${project.accent})`;
   const isFlagship = project.priority === 'flagship';
 
@@ -68,8 +66,7 @@ export default function ProjectCard({ project, onOpen, index = 0 }: ProjectCardP
     <article className="tilt-scene h-full">
       <CardReveal accent={accent} delay={Math.min(index * 0.06, 0.3)} className="h-full">
         <div
-          ref={tiltRef}
-          className="tilt-card spotlight surface group relative flex h-full flex-col overflow-hidden rounded-lg p-6 transition-[border-color,box-shadow] duration-500 hover:border-[color-mix(in_srgb,var(--card-accent)_45%,transparent)] sm:p-7"
+          className="surface group relative flex h-full flex-col overflow-hidden rounded-xl p-6 transition-[border-color,box-shadow] duration-300 hover:border-[var(--rule-strong)] sm:p-7"
           style={{ ['--card-accent' as string]: accent }}
         >
           {/* Accent edge — the card's identity colour, lit on hover. */}
