@@ -70,7 +70,7 @@ export const skillGroups: SkillGroup[] = [
     accent: 'accent-3',
     summary: 'Decoupling producers from consumers so systems scale independently.',
     skills: [
-      { name: 'Apache Kafka', icon: 'stream', note: 'Event streaming behind the live cricket dashboard.', core: true },
+      { name: 'Apache Kafka', icon: 'stream', note: 'Optional event transport for the CareerFlux ingestion pipeline, interchangeable with an in-process bus.', core: true },
       { name: 'RabbitMQ', icon: 'queue', note: 'Queue-based task distribution and retries.' },
     ],
   },

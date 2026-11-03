@@ -49,19 +49,19 @@ export const journey: JourneyEntry[] = [
     id: 'distributed',
     period: 'Depth',
     title: 'Distributed & Event-Driven Systems',
-    context: 'IPL Dashboard · Distributed KV Store',
+    context: 'Distributed KV Store · CareerFlux',
     description:
-      'Went after the harder problems: Kafka-based event processing with Redis caching behind a live data dashboard, and a key-value store exploring replication, leader and follower behaviour, log-oriented design and fault tolerance from first principles.',
-    highlights: ['Apache Kafka', 'Redis', 'Replication', 'Consensus'],
+      'Went after the harder problems: a key-value store exploring replication, leader and follower behaviour, log-oriented design and fault tolerance from first principles, and an ingestion pipeline that runs on an in-process bus or Kafka with the same topics and handlers.',
+    highlights: ['Replication', 'Consensus', 'Apache Kafka', 'Event-driven design'],
   },
   {
     id: 'ai',
     period: 'Current focus',
     title: 'Intelligent Systems',
-    context: 'Nexus AI · Enterprise Knowledge Model · CyberGuard',
+    context: 'Nexus AI · Enterprise Knowledge Model · CareerFlux',
     description:
-      'Building systems where knowledge, reasoning and application workflows work together — enterprise knowledge modelling and AI-assisted security assessment, applied to real workflows rather than as demos.',
-    highlights: ['AI Systems', 'Knowledge Modelling', 'Security Intelligence'],
+      'Building systems where knowledge, reasoning and application workflows work together — enterprise knowledge modelling and career intelligence with explainable matching, applied to real workflows rather than as demos.',
+    highlights: ['AI Systems', 'Knowledge Modelling', 'Career Intelligence'],
     current: true,
   },
 ];

@@ -67,7 +67,7 @@ today, so link previews will show no image.
 src/
   data/                  all content — edits usually mean touching only this
     personal.ts          identity, headline, bio, principles, contact details
-    projects.ts          nine projects: problem, approach, architecture, links
+    projects.ts          seven projects: problem, approach, architecture, links
     skills.ts            five disciplines, each technology with a usage note
     experience.ts        the journey timeline
     nav.ts               section index, shared by header and mobile menu

@@ -1,8 +1,7 @@
 export type ProjectCategory =
   | 'AI & Intelligent Systems'
   | 'Backend & Full-Stack'
-  | 'Distributed & Event-Driven'
-  | 'Developer / Product Systems';
+  | 'Distributed & Event-Driven';
 
 export type ProjectPriority = 'flagship' | 'engineering' | 'product';
 
@@ -32,8 +31,12 @@ export interface Project {
    * All of these were checked against the live GitHub account. The values this
    * file previously carried — distributed-kv-store, ipl-dashboard,
    * medication-tracker, swagruha-foods, finance-data-processing, devradar —
-   * every single one pointed at a repo that does not exist. "Nexus AI",
-   * "CyberGuard Intelligence" and "DevRadar" have no public repo yet.
+   * every single one pointed at a repo that does not exist. "Nexus AI" has no
+   * public repo yet.
+   *
+   * Only finished projects belong in this list. Ideas that are not built yet
+   * (CyberGuard Intelligence, IPL Live Cricket Dashboard, DevRadar) were
+   * removed rather than shown as work.
    */
   github: string;
   /** Deployed demo, when one exists. Cards render the link only if set. */
@@ -47,6 +50,22 @@ const flow = (labels: string[]) => ({
 });
 
 export const projects: Project[] = [
+  {
+    id: 'careerflux', title: 'CareerFlux', subtitle: 'Career intelligence platform', category: 'Backend & Full-Stack', priority: 'flagship',
+    tech: ['Java 21', 'Spring Boot', 'React', 'Spring AI', 'PostgreSQL', 'Kafka', 'Flyway', 'JWT'], role: 'Full-Stack Developer',
+    problem: 'Job boards list postings without saying where they came from or whether collecting them was appropriate, and rank them with scores nobody can explain.',
+    approach: 'A career intelligence platform that finds relevant employers, checks each source may be read, tracks postings for change and explains every match.',
+    features: [
+      'Policy-gated source access: robots.txt and reviewed terms must clear before anything is read',
+      'Job normalization, cross-source deduplication and change monitoring',
+      'Deterministic, explainable matching with the strengths and gaps behind each score',
+      'Resume onboarding, with optional Gemini-assisted parsing and match explanations',
+      'Match alerts, saved / dismissed / applied tracking and an append-only audit record',
+      'Greenhouse, Lever and Ashby source adapters; in-process or Kafka event transport',
+    ],
+    architecture: flow(['Source Policy', 'Ingestion', 'Job Intelligence', 'Matching', 'Alerts']),
+    contribution: 'Designed and built the platform end to end — the Spring Boot backend modules, the ingestion pipeline and the React front end.', github: 'https://github.com/maruthi-sreeram-p/careerFlux', accent: 'accent-2',
+  },
   {
     id: 'nexus-ai', title: 'Nexus AI', subtitle: 'Practical intelligent systems', category: 'AI & Intelligent Systems', priority: 'flagship',
     tech: ['AI', 'Knowledge', 'Intelligent Systems'], role: 'Engineering Project',
@@ -64,14 +83,6 @@ export const projects: Project[] = [
     contribution: 'Developed the project as an enterprise engineering study of structured knowledge systems.', github: 'https://github.com/maruthi-sreeram-p/enterprise-ai-knowledge-model', accent: 'accent-3',
   },
   {
-    id: 'cyberguard-intelligence', title: 'CyberGuard Intelligence', subtitle: 'Cybersecurity intelligence platform', category: 'AI & Intelligent Systems', priority: 'flagship',
-    tech: ['Cybersecurity', 'AI', 'Security Intelligence'], role: 'Engineering Project',
-    problem: 'Website security signals need to be assessed thoughtfully to support better security workflows.',
-    approach: 'An AI-powered cybersecurity intelligence and passive website assessment platform designed to analyze web security signals and support intelligent security workflows.',
-    features: ['Passive website assessment', 'Intelligent security analysis', 'Cybersecurity workflow support', 'Self-healing concept exploration'], architecture: flow(['Website Signals', 'Intelligent Analysis', 'Security Workflow']),
-    contribution: 'Built the project around intelligent analysis and passive security assessment concepts.', github: '', accent: 'ember',
-  },
-  {
     id: 'distributed-kv-store', title: 'Distributed Key-Value Store', subtitle: 'Replication and fault-tolerant systems', category: 'Distributed & Event-Driven', priority: 'engineering',
     tech: ['Java', 'Distributed Systems', 'Raft/KRaft'], role: 'Engineering Project',
     problem: 'Distributed storage requires careful handling of replication, leadership, logs and consistency.',
@@ -80,28 +91,12 @@ export const projects: Project[] = [
     contribution: 'Explored core distributed-systems patterns through a practical key-value storage project.', github: 'https://github.com/maruthi-sreeram-p/distributed-key-value-Store-using-kraft', accent: 'accent',
   },
   {
-    id: 'ipl-dashboard', title: 'IPL Live Cricket Dashboard', subtitle: 'Event-driven live data platform', category: 'Distributed & Event-Driven', priority: 'engineering',
-    tech: ['Spring Boot', 'Kafka', 'Redis', 'MySQL', 'MongoDB'], role: 'Backend Developer',
-    problem: 'Live cricket data needs event-driven processing, caching and multiple data stores to support a dashboard.',
-    approach: 'A backend-driven cricket data platform using event-driven processing, caching and multiple data stores to support live dashboard functionality.',
-    features: ['Apache Kafka', 'Redis caching', 'Event-driven processing', 'Data processing', 'MySQL and MongoDB integration'], architecture: flow(['Data', 'Kafka', 'Spring Boot', 'Redis / Databases', 'Dashboard']),
-    contribution: 'Worked on the backend-oriented event and data-processing architecture.', github: 'https://github.com/maruthi-sreeram-p/ipl-cricket-dashboard', accent: 'accent-2',
-  },
-  {
     id: 'medicare', title: 'MediCare — Online Medication & Prescription Tracker', subtitle: 'Full-stack prescription management platform', category: 'Backend & Full-Stack', priority: 'engineering',
     tech: ['Java', 'Spring Boot', 'React', 'MySQL', 'JWT', 'REST API'], role: 'Backend Lead Developer',
     problem: 'Medication and prescription workflows need secure access, persistent data and an accessible application interface.',
     approach: 'A full-stack prescription management platform with secure authentication, REST APIs, database integration and medication management workflows.',
     features: ['Spring Boot backend', 'REST APIs', 'JWT authentication', 'MySQL', 'React integration', 'Role-based access'], architecture: flow(['React', 'REST API', 'Spring Boot', 'Service Layer', 'JPA / Hibernate', 'MySQL']),
     contribution: 'Led backend development and connected the application services, APIs and data layer.', github: 'https://github.com/maruthi-sreeram-p/online-medication-and-prescription-tracker', accent: 'accent',
-  },
-  {
-    id: 'devradar', title: 'DevRadar', subtitle: 'Developer intelligence and content automation', category: 'Developer / Product Systems', priority: 'product',
-    tech: ['Developer Tools', 'Automation', 'Content'], role: 'Product Engineering Project',
-    problem: 'Developers need a focused way to discover technology updates and turn relevant information into useful content.',
-    approach: 'An open-source developer intelligence and content automation platform that gathers technology updates, filters them by interests and generates review-ready content.',
-    features: ['Technology discovery', 'Interest-based filtering', 'Content automation', 'Creator workflow support'], architecture: flow(['Technology Updates', 'Interest Filter', 'Review-ready Content']),
-    contribution: 'Built the project around developer discovery, filtering and content workflows.', github: '', accent: 'accent-2',
   },
   {
     id: 'swagruha-food', title: 'Swagruha Food — E-Commerce Platform', subtitle: 'Food ordering and product workflows', category: 'Backend & Full-Stack', priority: 'product',

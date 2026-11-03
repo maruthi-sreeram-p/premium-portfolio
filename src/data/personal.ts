@@ -20,7 +20,7 @@ export const personal = {
   disciplines: ['Java Backend', 'Full-Stack Applications', 'APIs', 'Automation'],
 
   about: `A B.Tech CSE student focused on Java backend development, building practical software with Spring Boot, databases, APIs, and full-stack applications. Continuously improving through projects and engineering practice.`,
-  aboutExpanded: `I care about the parts of a system most people never see: how a service is layered, where the boundaries sit, what happens when a node drops out, and whether the next person can read the code. Most of what I have built started as a question about how something actually works — a key-value store to understand replication, an event pipeline to understand Kafka — and turned into something that runs.`,
+  aboutExpanded: `I care about the parts of a system most people never see: how a service is layered, where the boundaries sit, what happens when a node drops out, and whether the next person can read the code. Most of what I have built started as a question about how something actually works — a key-value store to understand replication, an ingestion pipeline to understand event-driven design — and turned into something that runs.`,
 
   principles: [
     {
