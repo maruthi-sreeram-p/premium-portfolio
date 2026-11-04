@@ -672,6 +672,12 @@
   opacity: 1;
 }
 
+/* Project artwork: strokes stay 1 device pixel however far the SVG is scaled to
+   fill its stage. */
+.project-art * {
+  vector-effect: non-scaling-stroke;
+}
+
 /* -- Map tiles -------------------------------------------------------------
    The ground of a project card's stage: a field of rounded squares, like city
    blocks seen from above. The shape is a mask over a flat foreground tint, so

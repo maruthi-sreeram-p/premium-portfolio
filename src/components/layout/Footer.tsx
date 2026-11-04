@@ -1,7 +1,7 @@
 import { FileText, Mail } from 'lucide-react';
 import { personal } from '../../data/personal';
 import Container from './Container';
-import DotText from '../fx/DotText';
+import ParticleText from '../fx/ParticleText';
 import { GithubIcon, LinkedInIcon } from '../shared/SocialIcons';
 import { scrollToTop } from '../../lib/scroll';
 
@@ -75,7 +75,7 @@ export default function Footer() {
           maskImage: 'linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent)',
         }}
       >
-        <DotText signature="Maruthi Sreeram" caption="JAVA FULLSTACK DEVELOPER" />
+        <ParticleText signature="Maruthi Sreeram" caption="JAVA FULLSTACK DEVELOPER" />
       </div>
     </footer>
   );
