@@ -14,12 +14,6 @@ interface ProjectCardProps {
   index?: number;
   /** Skip the entrance — the card is returning, not arriving. */
   instant?: boolean;
-  /**
-   * False for a repeated copy of the card (the looping band shows each project
-   * twice): it must not claim the layout id or the focus-return hook that the
-   * real card owns.
-   */
-  primary?: boolean;
 }
 
 /*
@@ -59,7 +53,6 @@ export default function ProjectCard({
   onOpen,
   index = 0,
   instant = false,
-  primary = true,
 }: ProjectCardProps) {
   // The card turns toward the pointer and lifts a little. Fine-pointer devices
   // only (the hook checks).
@@ -74,9 +67,6 @@ export default function ProjectCard({
   const shownFlow = { nodes: flowNodes.slice(0, MAX_FLOW) };
   const extraFlow = flowNodes.length - shownFlow.nodes.length;
 
-  const shellClass =
-    'surface absolute inset-0 -z-10 transition-colors duration-300 group-hover:border-[var(--rule-strong)]';
-
   return (
     <article className="tilt-scene h-full">
       <CardReveal accent={accent} delay={Math.min(index * 0.06, 0.3)} className="h-full" instant={instant}>
@@ -88,16 +78,12 @@ export default function ProjectCard({
           {/* The card's background, as its own empty element. When the project
               opens, this is what grows into the detail view's header panel
               (same layoutId) — empty, so nothing inside it is stretched. */}
-          {primary ? (
-            <motion.span
-              layoutId={`project-shell-${project.id}`}
-              aria-hidden="true"
-              className={shellClass}
-              style={{ borderRadius: 12 }}
-            />
-          ) : (
-            <span aria-hidden="true" className={shellClass} style={{ borderRadius: 12 }} />
-          )}
+          <motion.span
+            layoutId={`project-shell-${project.id}`}
+            aria-hidden="true"
+            className="surface absolute inset-0 -z-10 transition-colors duration-300 group-hover:border-[var(--rule-strong)]"
+            style={{ borderRadius: 12 }}
+          />
 
           {/* Flagship marker. The category label that used to head the card is
               gone — the stage now runs to the top edge — so this sits on the
@@ -190,7 +176,7 @@ export default function ProjectCard({
             <button
               type="button"
               onClick={() => onOpen(project)}
-              data-project-trigger={primary ? project.id : undefined}
+              data-project-trigger={project.id}
               data-cursor
               data-cursor-label="View project"
               className="w-full text-left after:absolute after:inset-0 after:z-10 after:content-['']"

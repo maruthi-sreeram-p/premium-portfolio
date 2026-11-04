@@ -6,7 +6,7 @@ import SectionHeading from '../shared/SectionHeading';
 import Reveal from '../shared/Reveal';
 import ProjectCard from '../shared/ProjectCard';
 import ProjectDetail from '../shared/ProjectDetail';
-import ProjectConveyor from '../shared/ProjectConveyor';
+import ProjectRing from '../shared/ProjectRing';
 import { useDeviceTier } from '../../hooks/useDeviceTier';
 import { EASE_OUT_QUINT } from '../../lib/motion';
 import { CLOSE_PROJECT_EVENT, scrollToPosition } from '../../lib/scroll';
@@ -33,6 +33,9 @@ export default function Projects({ onOpenChange }: ProjectsProps) {
   // replaying their entrance would fight the card-to-panel morph in reverse.
   const [hasOpened, setHasOpened] = useState(false);
 
+  // The ring comes back round to the project that was just closed.
+  const [lastOpenedId, setLastOpenedId] = useState<string | null>(null);
+
   const returnY = useRef(0);
   const lastTrigger = useRef<string | null>(null);
 
@@ -44,6 +47,7 @@ export default function Projects({ onOpenChange }: ProjectsProps) {
   const open = useCallback((project: Project) => {
     returnY.current = window.scrollY;
     lastTrigger.current = project.id;
+    setLastOpenedId(project.id);
     setHasOpened(true);
     setSelected(project);
     onOpenChange?.(true);
@@ -175,11 +179,13 @@ export default function Projects({ onOpenChange }: ProjectsProps) {
                 </AnimatePresence>
               </motion.ul>
             ) : (
-              // Keyed on the filter so changing it restarts the band cleanly
-              // rather than re-measuring a loop that is mid-way along.
-              <div className="mt-6">
-                <ProjectConveyor key={filter} projects={visible} onOpen={open} />
-              </div>
+              // Keyed on the filter so a new set of cards starts a new ring.
+              <ProjectRing
+                key={filter}
+                projects={visible}
+                onOpen={open}
+                startId={lastOpenedId}
+              />
             )}
           </motion.div>
         )}
