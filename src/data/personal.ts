@@ -3,7 +3,7 @@ export const personal = {
   /** Name as set above the hero headline. */
   displayName: 'P. Maruthi Sreeram',
   initials: 'PMS',
-  title: 'Java Backend & Full-Stack Developer',
+  title: 'Java Fullstack Developer',
   email: 'maruthisreeram864@gmail.com',
   linkedin: 'https://www.linkedin.com/in/maruthi-sreeram-b57680331/',
   github: 'https://github.com/maruthi-sreeram-p',

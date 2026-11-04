@@ -6,36 +6,42 @@ const STEP = 3;
 /** Dot size, CSS px. */
 const DOT = 1.3;
 /** How far the pointer's light reaches. */
-const REACH = 140;
+const REACH = 150;
 /** Signature script, loaded in index.html. */
-const FONT = '"Mrs Saint Delafield", cursive';
+const SCRIPT = '"Mrs Saint Delafield", cursive';
+const SANS = 'Inter, system-ui, sans-serif';
 const REFERENCE = 100;
-/** Share of the width the word fills. */
-const FILL = 0.92;
+/** Widest the signature ever gets, CSS px. */
+const SIGNATURE_MAX = 640;
+/** Space between the signature and the caption, CSS px. */
+const LINE_GAP = 20;
 
 interface DotTextProps {
-  text: string;
+  /** The large line, set in the signature script. */
+  signature: string;
+  /** The small line beneath it, set in spaced capitals. */
+  caption: string;
   className?: string;
 }
 
 /**
- * A word spelled out in a field of dots, set in a signature script.
+ * A sign-off spelled out in a field of dots that spans the full width.
  *
- * The text is rasterised once to an offscreen canvas and sampled on a grid:
- * cells under the strokes become the brighter "lit" dots, every other cell is a
- * faint dot, so the word reads as a lighter patch in a uniform field. A slow
- * sheen runs diagonally through the lit dots, and dots near the pointer
+ * Both lines are rasterised once to an offscreen canvas and sampled on a grid:
+ * cells under the strokes become the brighter "lit" dots, and every other cell
+ * is a faint dot, so the words read as lighter patches in one continuous field.
+ * A slow sheen runs diagonally through the lit dots and dots near the pointer
  * brighten.
  *
- * A thin script falls between grid cells and vanishes, so the glyphs are
- * stroked as well as filled before sampling, which thickens them just enough to
- * land on several dots without changing the letterforms.
+ * Thin strokes fall between grid cells and vanish, so glyphs are stroked as
+ * well as filled before sampling. That thickens them just enough to land on
+ * several dots without changing the letterforms.
  *
  * Decorative (`aria-hidden`) — the caller supplies the real text for assistive
  * tech. The loop runs only while the canvas is on screen; reduced motion gets a
  * single still frame.
  */
-export default function DotText({ text, className = '' }: DotTextProps) {
+export default function DotText({ signature, caption, className = '' }: DotTextProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -60,33 +66,47 @@ export default function DotText({ text, className = '' }: DotTextProps) {
       draw(performance.now());
     };
 
-    /** Rasterise the text, then record which grid cells fall on a stroke. */
+    /** Rasterise both lines, then record which grid cells fall on a stroke. */
     const build = () => {
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
       const w = canvas.clientWidth;
       if (!w || w === lastWidth) return;
       lastWidth = w;
 
-      // Fit the word to the width, then size the canvas to its real ink bounds
-      // so there is no empty band above or below it.
       const probe = document.createElement('canvas').getContext('2d');
       if (!probe) return;
-      probe.font = `${REFERENCE}px ${FONT}`;
       probe.textAlign = 'center';
       probe.textBaseline = 'alphabetic';
-      // A script's flourishes reach past its advance width, so fit to the
-      // glyphs' real ink extent rather than the nominal text width.
-      const ref = probe.measureText(text);
+
+      // Signature: fit the glyphs' real ink extent — a script's flourishes
+      // reach past its advance width — to the target width.
+      probe.font = `${REFERENCE}px ${SCRIPT}`;
+      const ref = probe.measureText(signature);
       const inkRef = ref.actualBoundingBoxLeft + ref.actualBoundingBoxRight;
-      const size = (REFERENCE * w * FILL) / inkRef;
-      probe.font = `${size}px ${FONT}`;
-      const metrics = probe.measureText(text);
-      // With centred text, the ink's midpoint sits this far from the anchor.
-      const inkShift = (metrics.actualBoundingBoxLeft - metrics.actualBoundingBoxRight) / 2;
-      const stroke = Math.max(1.5, size * 0.022);
-      const pad = STEP * 4 + stroke;
-      const ascent = metrics.actualBoundingBoxAscent;
-      const h = Math.ceil(ascent + metrics.actualBoundingBoxDescent + pad * 2);
+      const sigSize = (REFERENCE * Math.min(w * 0.9, SIGNATURE_MAX)) / inkRef;
+      probe.font = `${sigSize}px ${SCRIPT}`;
+      const sig = probe.measureText(signature);
+      const sigShift = (sig.actualBoundingBoxLeft - sig.actualBoundingBoxRight) / 2;
+      const sigStroke = Math.max(1.5, sigSize * 0.022);
+
+      // Caption: a fixed small size, tracked out.
+      const capSize = Math.min(30, Math.max(18, w * 0.022));
+      const capSpacing = capSize * 0.14;
+      const capFont = `700 ${capSize}px ${SANS}`;
+      probe.font = capFont;
+      probe.letterSpacing = `${capSpacing}px`;
+      const cap = probe.measureText(caption);
+      const capShift = (cap.actualBoundingBoxLeft - cap.actualBoundingBoxRight) / 2;
+      const capStroke = 0.9;
+
+      const pad = STEP * 4;
+      const sigAscent = sig.actualBoundingBoxAscent;
+      const sigHeight = sigAscent + sig.actualBoundingBoxDescent;
+      const capAscent = cap.actualBoundingBoxAscent;
+      const capHeight = capAscent + cap.actualBoundingBoxDescent;
+      // Less room below than above: the field ends where the page does, so any
+      // extra here shows up as a dead strip under the caption.
+      const h = Math.ceil(pad + sigHeight + LINE_GAP + capHeight + STEP);
 
       canvas.style.height = `${h}px`;
       canvas.width = Math.round(w * dpr);
@@ -103,13 +123,22 @@ export default function DotText({ text, className = '' }: DotTextProps) {
       if (!m) return;
       m.fillStyle = '#fff';
       m.strokeStyle = '#fff';
-      m.lineWidth = stroke;
       m.lineJoin = 'round';
-      m.font = `${size}px ${FONT}`;
       m.textAlign = 'center';
       m.textBaseline = 'alphabetic';
-      m.fillText(text, w / 2 + inkShift, pad + ascent);
-      m.strokeText(text, w / 2 + inkShift, pad + ascent);
+
+      const sigY = pad + sigAscent;
+      m.font = `${sigSize}px ${SCRIPT}`;
+      m.lineWidth = sigStroke;
+      m.fillText(signature, w / 2 + sigShift, sigY);
+      m.strokeText(signature, w / 2 + sigShift, sigY);
+
+      const capY = pad + sigHeight + LINE_GAP + capAscent;
+      m.font = capFont;
+      m.letterSpacing = `${capSpacing}px`;
+      m.lineWidth = capStroke;
+      m.fillText(caption, w / 2 + capShift, capY);
+      m.strokeText(caption, w / 2 + capShift, capY);
 
       const data = m.getImageData(0, 0, w, h).data;
       lit = new Uint8Array(cols * rows);
@@ -140,9 +169,9 @@ export default function DotText({ text, className = '' }: DotTextProps) {
           const x = c * STEP + (STEP - DOT) / 2;
           const on = lit[r * cols + c] === 1;
 
-          // The sheen travels diagonally through the word, so it reads as light
-          // passing across it rather than every dot pulsing together.
-          let alpha = on ? 0.5 + 0.25 * Math.sin(t * 1.5 - c * 0.12 - r * 0.08) : 0.08;
+          // The sheen travels diagonally through the words, so it reads as
+          // light passing across them rather than every dot pulsing together.
+          let alpha = on ? 0.5 + 0.25 * Math.sin(t * 1.5 - c * 0.06 - r * 0.08) : 0.08;
 
           if (active) {
             const d = Math.hypot(x - mx, y - my);
@@ -188,11 +217,14 @@ export default function DotText({ text, className = '' }: DotTextProps) {
     const resize = new ResizeObserver(build);
     resize.observe(canvas);
 
-    // The glyph shapes depend on the script font being loaded.
-    const fontReady = document.fonts
-      ? document.fonts.load(`${REFERENCE}px ${FONT}`, text)
+    // The glyph shapes depend on both fonts being loaded.
+    const fontsReady = document.fonts
+      ? Promise.all([
+          document.fonts.load(`${REFERENCE}px ${SCRIPT}`, signature),
+          document.fonts.load(`700 20px ${SANS}`, caption),
+        ])
       : Promise.resolve();
-    fontReady
+    fontsReady
       .catch(() => undefined)
       .then(() => {
         if (!cancelled) {
@@ -209,14 +241,14 @@ export default function DotText({ text, className = '' }: DotTextProps) {
       themeObserver.disconnect();
       resize.disconnect();
     };
-  }, [text]);
+  }, [signature, caption]);
 
   return (
     <canvas
       ref={canvasRef}
       aria-hidden="true"
       className={`block w-full ${className}`}
-      style={{ height: 100 }}
+      style={{ height: 140 }}
     />
   );
 }

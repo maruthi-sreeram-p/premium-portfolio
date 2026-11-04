@@ -14,7 +14,7 @@ const links = [
 
 export default function Footer() {
   return (
-    <footer className="relative border-t pb-4 pt-12 md:pt-16">
+    <footer className="relative border-t pb-0 pt-12 md:pt-16">
       <Container>
         <div className="flex flex-col gap-8 md:flex-row md:items-center md:justify-between">
           <div>
@@ -64,22 +64,18 @@ export default function Footer() {
         </div>
       </Container>
 
-      {/* The sign-off: the name as a signature, the role beneath it. */}
-      <div className="mt-12 flex flex-col items-center px-6 text-center">
-        {/* The signature is drawn in dots; the real text is for screen readers. */}
-        <p className="sr-only">Maruthi Sreeram</p>
-        <div
-          className="w-full max-w-[40rem]"
-          style={{
-            WebkitMaskImage: 'linear-gradient(90deg, transparent, #000 5%, #000 95%, transparent)',
-            maskImage: 'linear-gradient(90deg, transparent, #000 5%, #000 95%, transparent)',
-          }}
-        >
-          <DotText text="Maruthi Sreeram" />
-        </div>
-        <p className="mt-1 text-[0.8125rem] font-medium uppercase tracking-[0.12em] text-[var(--fg-soft)]">
-          Java Fullstack Developer
-        </p>
+      {/* The sign-off: a full-width field of dots with the name as a signature
+          and the role beneath it. Both are drawn in dots; the real text is for
+          screen readers. */}
+      <p className="sr-only">Maruthi Sreeram, Java Fullstack Developer</p>
+      <div
+        className="mt-12"
+        style={{
+          WebkitMaskImage: 'linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent)',
+          maskImage: 'linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent)',
+        }}
+      >
+        <DotText signature="Maruthi Sreeram" caption="JAVA FULLSTACK DEVELOPER" />
       </div>
     </footer>
   );
