@@ -34,7 +34,7 @@
 :root[data-theme="dark"] {
   color-scheme: dark;
 
-  --shell: #09090b;
+  --shell: #000000;
   --card: rgba(255, 255, 255, 0.025);
   --card-solid: #0e0e11;
   --card-border: rgba(255, 255, 255, 0.09);
