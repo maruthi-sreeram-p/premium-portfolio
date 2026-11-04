@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ArrowLeft, ArrowUpRight, Bug, Route, Server, type LucideIcon } from 'lucide-react';
 import { practice, type PracticeItem } from '../../data/practice';
@@ -7,6 +7,13 @@ import SectionHeading from '../shared/SectionHeading';
 import Reveal from '../shared/Reveal';
 import { GithubIcon } from '../shared/SocialIcons';
 import { EASE_OUT_QUINT } from '../../lib/motion';
+import { CLOSE_PROJECT_EVENT, scrollToPosition } from '../../lib/scroll';
+import { ScrollTrigger } from '../../lib/gsap';
+
+interface PracticeProps {
+  /** Tells the page when a lab is open, so it can hide everything else. */
+  onOpenChange?: (open: boolean) => void;
+}
 
 /** One glyph per item, set large and faint on its card. */
 const GLYPH: Record<string, LucideIcon> = {
@@ -72,23 +79,66 @@ function Clip() {
  * to the real site or repository appear. "Back" (or Escape) returns to the
  * pile.
  */
-export default function Practice() {
+export default function Practice({ onOpenChange }: PracticeProps) {
   const [openId, setOpenId] = useState<string | null>(null);
   const open = practice.find((item) => item.id === openId) ?? null;
   const backRef = useRef<HTMLButtonElement>(null);
   const lastTrigger = useRef<string | null>(null);
+  const returnY = useRef(0);
 
-  const close = () => setOpenId(null);
+  // Set while the lab is being left through navigation: the pile then snaps
+  // back instead of animating, so the page is its final length straight away
+  // and the scroll that follows measures the real layout.
+  const [snap, setSnap] = useState(false);
 
-  // Escape closes.
+  const openCard = useCallback(
+    (id: string) => {
+      returnY.current = window.scrollY;
+      setSnap(false);
+      setOpenId(id);
+      onOpenChange?.(true);
+    },
+    [onOpenChange],
+  );
+
+  const close = useCallback(() => {
+    setOpenId(null);
+    onOpenChange?.(false);
+  }, [onOpenChange]);
+
+  const closeForNavigation = useCallback(() => {
+    setSnap(true);
+    close();
+  }, [close]);
+
+  // An open lab takes over the page — the rest of it is hidden — so the
+  // document is a different length the moment it opens. Move the scroll
+  // position in the same frame, before paint: to the top when a lab opens, and
+  // back to where the visitor was when it closes. The first run is the initial
+  // mount, which must not scroll anywhere.
+  const mounted = useRef(false);
+  useLayoutEffect(() => {
+    if (!mounted.current) {
+      mounted.current = true;
+      return;
+    }
+    scrollToPosition(openId ? 0 : returnY.current, true);
+    ScrollTrigger.refresh();
+  }, [openId]);
+
+  // Escape closes, and so does navigating to another section.
   useEffect(() => {
     if (!openId) return;
     const onKey = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') setOpenId(null);
+      if (event.key === 'Escape') close();
     };
     window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
-  }, [openId]);
+    window.addEventListener(CLOSE_PROJECT_EVENT, closeForNavigation);
+    return () => {
+      window.removeEventListener('keydown', onKey);
+      window.removeEventListener(CLOSE_PROJECT_EVENT, closeForNavigation);
+    };
+  }, [openId, close, closeForNavigation]);
 
   // Keyboard users follow the card: focus moves to "Back" when one opens, and
   // returns to the card that opened it.
@@ -121,7 +171,11 @@ export default function Practice() {
 
       <Reveal>
         <div className="pile-wrap mt-14">
-          <div className="pile" data-open={open ? '' : undefined}>
+          <div
+            className="pile"
+            data-open={open ? '' : undefined}
+            data-snap={snap ? '' : undefined}
+          >
             {practice.map((item, i) => {
               const pose = POSE[i % POSE.length];
               const Glyph = GLYPH[item.id] ?? Route;
@@ -135,7 +189,7 @@ export default function Practice() {
                   aria-expanded={selected}
                   aria-label={`${item.title} — open details`}
                   tabIndex={open && !selected ? -1 : undefined}
-                  onClick={() => setOpenId(item.id)}
+                  onClick={() => openCard(item.id)}
                   className="pile-card surface"
                   style={
                     {
@@ -175,7 +229,9 @@ export default function Practice() {
 
       {/* The card that was opened, described. The link lives here and nowhere
           else — the cards themselves go nowhere. */}
-      <AnimatePresence>
+      {/* `popLayout` takes the leaving description out of the flow the moment it
+          starts to fade, so the page is already its final length while it does. */}
+      <AnimatePresence mode="popLayout">
         {open && (
           <motion.div
             key={open.id}

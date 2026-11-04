@@ -26,9 +26,11 @@ const MARQUEE_ITEMS = [
 
 export default function App() {
   const { isTouch, prefersReducedMotion } = useDeviceTier();
-  // An open project takes over the page: every other section is hidden (not
-  // unmounted, so scroll-driven state survives) until it is closed.
+  // An open project or lab takes over the page: every other section is hidden
+  // (not unmounted, so scroll-driven state survives) until it is closed.
   const [projectOpen, setProjectOpen] = useState(false);
+  const [labOpen, setLabOpen] = useState(false);
+  const takenOver = projectOpen || labOpen;
 
   const [theme, setTheme] = useState<Theme>(() =>
     document.documentElement.dataset.theme === 'light' ? 'light' : 'dark',
@@ -87,7 +89,7 @@ export default function App() {
       <Header theme={theme} onToggleTheme={toggleTheme} />
 
       <main id="main">
-        <div hidden={projectOpen}>
+        <div hidden={takenOver}>
           <Hero ready />
 
           {/* A scrolling headline band between the hero and the first section —
@@ -100,16 +102,20 @@ export default function App() {
           <About />
           <Skills />
         </div>
-        <Projects onOpenChange={setProjectOpen} />
+        <div hidden={labOpen}>
+          <Projects onOpenChange={setProjectOpen} />
+        </div>
         <div hidden={projectOpen}>
-          <Practice />
+          <Practice onOpenChange={setLabOpen} />
+        </div>
+        <div hidden={takenOver}>
           <Experience />
           <Services />
           <Contact />
         </div>
       </main>
 
-      {!projectOpen && <Footer />}
+      {!takenOver && <Footer />}
     </MotionConfig>
   );
 }

@@ -3,8 +3,11 @@ import { gsap, ScrollTrigger } from './gsap';
 
 let lenis: Lenis | null = null;
 
-/** Dispatched on `window` when navigation needs the open project closed. */
+/** Dispatched on `window` when navigation needs the open project or lab closed. */
 export const CLOSE_PROJECT_EVENT = 'portfolio:close-project';
+
+/** Long enough for the page to re-render and restore its scroll position. */
+const SETTLE_MS = 120;
 
 /**
  * Start Lenis and bind it to GSAP's ticker and ScrollTrigger.
@@ -85,12 +88,13 @@ export function scrollToSection(id: string, retried = false) {
   const target = document.getElementById(id.replace(/^#/, ''));
   if (!target) return;
 
-  // A section can be hidden while a project is open. Ask for it to be closed,
-  // then try again once the page has laid out again — scrolling to a hidden
-  // element would land at the top of the page.
+  // A section can be hidden while a project or lab is open. Ask for it to be
+  // closed, then try again once the page has laid out again — scrolling to a
+  // hidden element would land at the top of the page. Closing for navigation
+  // skips the animations that change the page's length, so by now it is final.
   if (target.offsetParent === null && !retried) {
     window.dispatchEvent(new Event(CLOSE_PROJECT_EVENT));
-    requestAnimationFrame(() => requestAnimationFrame(() => scrollToSection(id, true)));
+    window.setTimeout(() => scrollToSection(id, true), SETTLE_MS);
     return;
   }
 

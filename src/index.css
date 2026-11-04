@@ -709,6 +709,13 @@
   }
 }
 
+/* Leaving a lab through navigation: no animation, so the page is its final
+   length in the same frame (see Practice.tsx). */
+.pile[data-snap],
+.pile[data-snap] .pile-card {
+  transition: none;
+}
+
 .pile-card {
   position: absolute;
   left: var(--l-sm);
