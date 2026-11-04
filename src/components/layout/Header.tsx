@@ -1,13 +1,11 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Menu, Moon, Sun } from 'lucide-react';
 import Container from './Container';
 import MobileMenu from './MobileMenu';
 import { personal } from '../../data/personal';
 import { navLinks } from '../../data/nav';
-import { gsap } from '../../lib/gsap';
 import { scrollToSection, scrollToTop } from '../../lib/scroll';
-import { useDeviceTier } from '../../hooks/useDeviceTier';
 
 interface HeaderProps {
   theme: 'light' | 'dark';
