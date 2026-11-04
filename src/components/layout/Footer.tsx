@@ -1,6 +1,7 @@
 import { FileText, Mail } from 'lucide-react';
 import { personal } from '../../data/personal';
 import Container from './Container';
+import DotText from '../fx/DotText';
 import { GithubIcon, LinkedInIcon } from '../shared/SocialIcons';
 import { scrollToTop } from '../../lib/scroll';
 
@@ -62,6 +63,17 @@ export default function Footer() {
           </div>
         </div>
       </Container>
+
+      {/* The name again, spelled in dots and faded at the edges. */}
+      <div
+        className="mt-12"
+        style={{
+          WebkitMaskImage: 'linear-gradient(90deg, transparent, #000 14%, #000 86%, transparent)',
+          maskImage: 'linear-gradient(90deg, transparent, #000 14%, #000 86%, transparent)',
+        }}
+      >
+        <DotText text={personal.name} />
+      </div>
     </footer>
   );
 }

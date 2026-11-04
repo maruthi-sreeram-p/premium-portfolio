@@ -1,7 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Menu, Moon, Sun } from 'lucide-react';
-import Container from './Container';
 import MobileMenu from './MobileMenu';
 import { personal } from '../../data/personal';
 import { navLinks } from '../../data/nav';
@@ -16,6 +15,13 @@ export default function Header({ theme, onToggleTheme }: HeaderProps) {
   const [scrolled, setScrolled] = useState(false);
   const [active, setActive] = useState<string>('');
   const [mobileOpen, setMobileOpen] = useState(false);
+  // The link the pointer (or keyboard focus) is on. The highlight pill follows
+  // it, and settles back on the current section when it leaves.
+  const [hovered, setHovered] = useState<string | null>(null);
+  const [pill, setPill] = useState<{ left: number; width: number } | null>(null);
+  const navRef = useRef<HTMLElement>(null);
+  const itemRefs = useRef<Record<string, HTMLButtonElement | null>>({});
+  const pillTarget = hovered ?? active;
 
   /* -- Condensed state --------------------------------------------------- */
   useEffect(() => {
@@ -51,24 +57,57 @@ export default function Header({ theme, onToggleTheme }: HeaderProps) {
     return () => observer.disconnect();
   }, []);
 
+  /* -- Highlight pill ----------------------------------------------------- */
+  useLayoutEffect(() => {
+    const place = () => {
+      const el = itemRefs.current[pillTarget];
+      setPill(el ? { left: el.offsetLeft, width: el.offsetWidth } : null);
+    };
+    place();
+    // Web fonts land after first paint and change the link widths.
+    const nav = navRef.current;
+    if (!nav) return;
+    const observer = new ResizeObserver(place);
+    observer.observe(nav);
+    return () => observer.disconnect();
+  }, [pillTarget]);
+
   return (
     <>
       <a href="#main" className="skip-link">
         Skip to content
       </a>
 
+      {/*
+        At the top of the page the bar is a plain full-width strip. Once the page
+        scrolls it condenses into a floating, rounded, blurred bar that sits
+        clear of the edges: the outer element moves it down from the top, the
+        inner one narrows, rounds and frosts. All of it is one 500ms transition
+        on the same curve.
+      */}
       <header
-        className="fixed inset-x-0 top-0 z-50 transition-[background-color,border-color,backdrop-filter] duration-500"
-        style={{
-          background: scrolled
-            ? 'color-mix(in srgb, var(--shell) 72%, transparent)'
-            : 'transparent',
-          borderBottom: `1px solid ${scrolled ? 'var(--rule)' : 'transparent'}`,
-          backdropFilter: scrolled ? 'blur(16px) saturate(140%)' : 'none',
-          WebkitBackdropFilter: scrolled ? 'blur(16px) saturate(140%)' : 'none',
-        }}
+        className="pointer-events-none fixed inset-x-0 z-50 flex justify-center transition-[top,padding] duration-500 ease-[var(--ease-out-quint)]"
+        style={{ top: scrolled ? 14 : 0, paddingInline: scrolled ? 16 : 0 }}
       >
-        <Container className="flex h-16 items-center justify-between gap-6 md:h-20">
+        <div
+          className="pointer-events-auto w-full transition-[max-width,border-radius,background-color,border-color,backdrop-filter,box-shadow] duration-500 ease-[var(--ease-out-quint)]"
+          style={{
+            maxWidth: scrolled ? '56rem' : '80rem',
+            borderRadius: scrolled ? 18 : 0,
+            background: scrolled
+              ? 'color-mix(in srgb, var(--shell) 75%, transparent)'
+              : 'transparent',
+            border: `1px solid ${scrolled ? 'var(--rule-strong)' : 'transparent'}`,
+            backdropFilter: scrolled ? 'blur(16px) saturate(140%)' : 'none',
+            WebkitBackdropFilter: scrolled ? 'blur(16px) saturate(140%)' : 'none',
+            boxShadow: scrolled ? '0 18px 40px -20px rgba(0, 0, 0, 0.6)' : 'none',
+          }}
+        >
+        <div
+          className={`flex items-center justify-between gap-6 transition-[height,padding] duration-500 ease-[var(--ease-out-quint)] ${
+            scrolled ? 'h-14 px-4 md:px-5' : 'h-16 px-6 md:h-20 md:px-8 lg:px-12'
+          }`}
+        >
           {/* Logo */}
           <button
             type="button"
@@ -79,36 +118,48 @@ export default function Header({ theme, onToggleTheme }: HeaderProps) {
             {personal.initials}
           </button>
 
-          {/* Desktop nav */}
-          <nav className="hidden items-center gap-1 md:flex" aria-label="Sections">
+          {/* Desktop nav. The pill is one element that slides to whichever link
+              is hovered, rather than each link having its own hover background,
+              so it travels between them. */}
+          <nav
+            ref={navRef}
+            className="relative hidden items-center gap-1 rounded-full p-1 md:flex"
+            aria-label="Sections"
+            onMouseLeave={() => setHovered(null)}
+          >
+            <motion.span
+              aria-hidden="true"
+              className="pointer-events-none absolute bottom-1 top-1 rounded-full"
+              style={{
+                background: 'color-mix(in srgb, var(--fg) 9%, transparent)',
+                border: '1px solid var(--rule)',
+              }}
+              initial={false}
+              animate={{
+                left: pill?.left ?? 0,
+                width: pill?.width ?? 0,
+                opacity: pill ? 1 : 0,
+              }}
+              transition={{ type: 'spring', stiffness: 420, damping: 34 }}
+            />
             {navLinks.map((link) => {
               const isActive = active === link.id;
               return (
                 <button
                   key={link.id}
+                  ref={(el) => {
+                    itemRefs.current[link.id] = el;
+                  }}
                   type="button"
                   onClick={() => scrollToSection(link.id)}
+                  onMouseEnter={() => setHovered(link.id)}
+                  onFocus={() => setHovered(link.id)}
+                  onBlur={() => setHovered(null)}
                   aria-current={isActive ? 'true' : undefined}
-                  className="relative px-3 py-2 text-[0.8125rem] font-medium transition-colors duration-300"
-                  style={{ color: isActive ? 'var(--fg)' : 'var(--fg-soft)' }}
+                  className="relative z-10 rounded-full px-3.5 py-1.5 text-[0.8125rem] font-medium transition-colors duration-300"
+                  style={{ color: pillTarget === link.id ? 'var(--fg)' : 'var(--fg-soft)' }}
                 >
                   {link.label}
-                  {isActive && (
-                    // A shared layoutId means the indicator *travels* between
-                    // items rather than fading out and in — the "controlled
-                    // energy" cue for the active section.
-                    <motion.span
-                      layoutId="nav-indicator"
-                      className="absolute inset-x-2 -bottom-px h-px"
-                      style={{
-                        background:
-                          'linear-gradient(90deg, transparent, var(--accent), transparent)',
-                        boxShadow:
-                          '0 0 10px color-mix(in srgb, var(--accent) calc(80% * var(--vfx)), transparent)',
-                      }}
-                      transition={{ type: 'spring', stiffness: 380, damping: 32 }}
-                    />
-                  )}
                 </button>
               );
             })}
@@ -158,7 +209,8 @@ export default function Header({ theme, onToggleTheme }: HeaderProps) {
               <Menu className="h-4 w-4" aria-hidden="true" />
             </button>
           </div>
-        </Container>
+        </div>
+        </div>
       </header>
 
       <MobileMenu isOpen={mobileOpen} onClose={() => setMobileOpen(false)} active={active} />

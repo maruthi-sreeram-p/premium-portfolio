@@ -4,6 +4,7 @@ import SectionWrapper from '../layout/SectionWrapper';
 import SectionHeading from '../shared/SectionHeading';
 import Reveal from '../shared/Reveal';
 import { GithubIcon } from '../shared/SocialIcons';
+import { usePointerGlow } from '../../hooks/usePointerGlow';
 
 /**
  * One lab. The title is the card's single link and its `::after` covers the
@@ -13,10 +14,11 @@ import { GithubIcon } from '../shared/SocialIcons';
 function LabCard({ lab, index }: { lab: Lab; index: number }) {
   const href = lab.live ?? lab.github ?? '#';
   const isLive = Boolean(lab.live);
+  const glowRef = usePointerGlow<HTMLElement>();
 
   return (
     <Reveal as="li" delay={index * 0.08} tilt className="h-full">
-      <article className="surface sweep group relative flex h-full flex-col overflow-hidden rounded-lg p-6 transition-[transform,border-color] duration-500 ease-[var(--ease-out-quint)] hover:-translate-y-1.5 hover:border-[var(--rule-strong)] sm:p-7">
+      <article ref={glowRef} className="surface dot-reveal sweep group relative isolate flex h-full flex-col overflow-hidden rounded-lg p-6 transition-[transform,border-color] duration-500 ease-[var(--ease-out-quint)] hover:-translate-y-1.5 hover:border-[var(--rule-strong)] sm:p-7">
         <span
           aria-hidden="true"
           className="absolute inset-x-0 top-0 h-px origin-left scale-x-0 transition-transform duration-700 group-hover:scale-x-100"

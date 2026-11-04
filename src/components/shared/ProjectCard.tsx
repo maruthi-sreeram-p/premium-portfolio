@@ -69,8 +69,8 @@ export default function ProjectCard({
   primary = true,
 }: ProjectCardProps) {
   // The card turns toward the pointer and lifts a little. Fine-pointer devices
-  // only (the hook checks), and the cursor glow is off — rotation alone.
-  const tiltRef = useTilt<HTMLDivElement>({ max: 8, lift: 14, trackSpotlight: false });
+  // only (the hook checks). It also feeds the dot grid that lights up under the pointer.
+  const tiltRef = useTilt<HTMLDivElement>({ max: 8, lift: 14, trackSpotlight: true });
   const accent = `var(--${project.accent})`;
   const isFlagship = project.priority === 'flagship';
 
@@ -96,13 +96,13 @@ export default function ProjectCard({
             <motion.span
               layoutId={`project-shell-${project.id}`}
               aria-hidden="true"
-              className="surface absolute inset-0 -z-10 transition-colors duration-300 group-hover:border-[var(--rule-strong)]"
+              className="surface dot-reveal absolute inset-0 -z-10 transition-colors duration-300 group-hover:border-[var(--rule-strong)]"
               style={{ borderRadius: 12 }}
             />
           ) : (
             <span
               aria-hidden="true"
-              className="surface absolute inset-0 -z-10 transition-colors duration-300 group-hover:border-[var(--rule-strong)]"
+              className="surface dot-reveal absolute inset-0 -z-10 transition-colors duration-300 group-hover:border-[var(--rule-strong)]"
               style={{ borderRadius: 12 }}
             />
           )}

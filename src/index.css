@@ -671,6 +671,36 @@
   opacity: 1;
 }
 
+/* -- Dot reveal ------------------------------------------------------------
+   The page's own signature, brought inside the card: on hover a dot grid fades
+   in around the pointer and falls away with distance, so the card shows the
+   same "lit where you look" ground as the page behind it. The host needs
+   `--mx` / `--my` (useTilt or usePointerGlow) and either to be the `.group`
+   itself or sit inside one. */
+.dot-reveal::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  pointer-events: none;
+  background-image: radial-gradient(
+    circle,
+    color-mix(in srgb, var(--fg) 55%, transparent) 1px,
+    transparent 1.4px
+  );
+  background-size: 16px 16px;
+  -webkit-mask-image: radial-gradient(circle 190px at var(--mx, 50%) var(--my, 50%), #000, transparent);
+  mask-image: radial-gradient(circle 190px at var(--mx, 50%) var(--my, 50%), #000, transparent);
+  opacity: 0;
+  transition: opacity 400ms var(--ease-out-quint);
+}
+.group:hover > .dot-reveal::before,
+.group:hover .dot-reveal::before,
+.dot-reveal:hover::before {
+  opacity: 1;
+}
+
 /* -- Sweep ----------------------------------------------------------------- */
 .sweep {
   position: relative;
