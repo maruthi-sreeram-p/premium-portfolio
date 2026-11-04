@@ -2,9 +2,9 @@
  * The artwork behind each project card's floating cards.
  *
  * There are no project screenshots in this repository, so each project gets a
- * small drawn scene that says what the project is about — a neural net for the
- * AI project, a ring of replicas for the key-value store, a pulse line and a
- * capsule for the medication tracker. They are line drawings in the theme's
+ * small drawn scene that says what the project is about — documents, chunks
+ * and a cited answer for the knowledge base, a pulse line and a capsule for the
+ * medication tracker, a ring of replicas for the key-value store. They are line drawings in the theme's
  * own greys with the card's accent on the one element worth noticing, so they
  * recolour with the theme and never compete with the cards floating over them.
  *
@@ -13,9 +13,9 @@
  * card crops the sides and a wide one crops the top and bottom.
  */
 
-const LINE = 'color-mix(in srgb, var(--fg) 26%, transparent)';
-const SOFT = 'color-mix(in srgb, var(--fg) 14%, transparent)';
-const FILL = 'color-mix(in srgb, var(--fg) 7%, transparent)';
+const LINE = 'color-mix(in srgb, var(--fg) 36%, transparent)';
+const SOFT = 'color-mix(in srgb, var(--fg) 18%, transparent)';
+const FILL = 'color-mix(in srgb, var(--fg) 8%, transparent)';
 const ACCENT = 'var(--card-accent, var(--accent))';
 
 type Pt = [number, number];
@@ -30,74 +30,6 @@ function Node({ at, r = 5, lit = false }: { at: Pt; r?: number; lit?: boolean })
   );
 }
 
-function Edge({ a, b, dashed = false }: { a: Pt; b: Pt; dashed?: boolean }) {
-  return (
-    <line
-      x1={a[0]}
-      y1={a[1]}
-      x2={b[0]}
-      y2={b[1]}
-      stroke={LINE}
-      strokeDasharray={dashed ? '3 5' : undefined}
-    />
-  );
-}
-
-/** A neural net: three layers, every node joined to the next layer. */
-function NeuralNet() {
-  const layers: Pt[][] = [
-    [[70, 52], [70, 100], [70, 148]],
-    [[150, 34], [150, 82], [150, 130], [150, 176]],
-    [[230, 52], [230, 100], [230, 148]],
-    [[310, 76], [310, 124]],
-  ];
-  return (
-    <>
-      {layers.slice(0, -1).flatMap((layer, i) =>
-        layer.flatMap((a, ai) =>
-          layers[i + 1].map((b, bi) => <Edge key={`${i}-${ai}-${bi}`} a={a} b={b} />),
-        ),
-      )}
-      {layers.flat().map((p, i) => (
-        <Node key={i} at={p} r={4.5} lit={i === 4 || i === 9} />
-      ))}
-    </>
-  );
-}
-
-/** A knowledge graph: a root, hubs, and leaves, with a few cross-links. */
-function KnowledgeGraph() {
-  const root: Pt = [180, 104];
-  const hubs: Pt[] = [[100, 54], [260, 54], [86, 150], [270, 152]];
-  const leaves: Pt[][] = [
-    [[48, 28], [124, 24]],
-    [[236, 22], [318, 40]],
-    [[40, 186], [118, 190]],
-    [[246, 190], [326, 176]],
-  ];
-  return (
-    <>
-      {hubs.map((h, i) => (
-        <g key={i}>
-          <Edge a={root} b={h} />
-          {leaves[i].map((l, li) => (
-            <Edge key={li} a={h} b={l} />
-          ))}
-        </g>
-      ))}
-      <Edge a={hubs[0]} b={hubs[1]} dashed />
-      <Edge a={hubs[2]} b={hubs[3]} dashed />
-      {leaves.flat().map((l, i) => (
-        <Node key={i} at={l} r={3} />
-      ))}
-      {hubs.map((h, i) => (
-        <Node key={i} at={h} r={5.5} />
-      ))}
-      <Node at={root} r={8} lit />
-    </>
-  );
-}
-
 /** Replication: a ring of nodes, one of them the leader. */
 function ReplicaRing() {
   const c: Pt = [180, 104];
@@ -109,12 +41,87 @@ function ReplicaRing() {
     <>
       <ellipse cx={c[0]} cy={c[1]} rx={100} ry={68} stroke={SOFT} strokeDasharray="3 5" />
       {ring.slice(1).map((p, i) => (
-        <Edge key={i} a={ring[0]} b={p} dashed />
+        <line
+          key={i}
+          x1={ring[0][0]}
+          y1={ring[0][1]}
+          x2={p[0]}
+          y2={p[1]}
+          stroke={LINE}
+          strokeDasharray="3 5"
+        />
       ))}
       {ring.slice(1).map((p, i) => (
         <Node key={i} at={p} r={6} />
       ))}
       <Node at={ring[0]} r={9} lit />
+    </>
+  );
+}
+
+/** Retrieval: documents are cut into chunks, the relevant ones are found, and
+    an answer comes back citing them. */
+function RagPipeline() {
+  const chunks: Pt[] = [];
+  for (let r = 0; r < 3; r++) for (let c = 0; c < 4; c++) chunks.push([140 + c * 22, 70 + r * 22]);
+  const hit = new Set([1, 6, 10]);
+  return (
+    <>
+      {[0, 1, 2].map((i) => (
+        <g key={i} transform={`translate(${26 + i * 9} ${54 + i * 9})`}>
+          <rect width="52" height="68" rx="8" fill={FILL} stroke={LINE} />
+          <path d="M 12 20 H 40 M 12 32 H 40 M 12 44 H 28" stroke={SOFT} />
+        </g>
+      ))}
+      <path d="M 96 100 C 112 100, 116 98, 132 98" stroke={LINE} strokeDasharray="3 5" />
+      {chunks.map(([x, y], i) => (
+        <rect
+          key={i}
+          x={x}
+          y={y}
+          width="16"
+          height="16"
+          rx="4"
+          fill={hit.has(i) ? ACCENT : FILL}
+          fillOpacity={hit.has(i) ? 0.35 : 1}
+          stroke={hit.has(i) ? ACCENT : LINE}
+        />
+      ))}
+      <path d="M 232 98 C 246 98, 250 100, 262 100" stroke={ACCENT} strokeOpacity="0.7" strokeDasharray="3 5" />
+      <g transform="translate(262 62)">
+        <rect width="84" height="80" rx="12" fill={FILL} stroke={LINE} />
+        <path d="M 14 22 H 70 M 14 36 H 70 M 14 50 H 48" stroke={SOFT} />
+        <circle cx="22" cy="66" r="7" stroke={ACCENT} fill={ACCENT} fillOpacity="0.3" />
+        <circle cx="42" cy="66" r="7" stroke={ACCENT} fill={ACCENT} fillOpacity="0.3" />
+      </g>
+    </>
+  );
+}
+
+/** A copilot: a question, an answer, and a spark of intelligence. */
+function AiCopilot() {
+  return (
+    <>
+      <g transform="translate(26 40)">
+        <rect width="132" height="48" rx="14" fill={FILL} stroke={LINE} />
+        <path d="M 16 18 H 100 M 16 32 H 70" stroke={SOFT} />
+      </g>
+      <g transform="translate(170 104)">
+        <rect width="150" height="56" rx="14" fill={FILL} stroke={ACCENT} />
+        <path d="M 16 20 H 120 M 16 34 H 96" stroke={SOFT} />
+        <path d="M 16 46 H 52" stroke={ACCENT} strokeOpacity="0.7" />
+      </g>
+      <path
+        d="M 306 34 L 311 48 L 325 53 L 311 58 L 306 72 L 301 58 L 287 53 L 301 48 Z"
+        fill={ACCENT}
+        fillOpacity="0.3"
+        stroke={ACCENT}
+      />
+      <g transform="translate(44 134)">
+        <circle cx="8" cy="8" r="8" stroke={LINE} fill={FILL} />
+        <circle cx="34" cy="8" r="8" stroke={LINE} fill={FILL} />
+        <circle cx="60" cy="8" r="8" stroke={ACCENT} fill={ACCENT} fillOpacity="0.3" />
+      </g>
     </>
   );
 }
@@ -237,8 +244,8 @@ function Blocks() {
 
 const SCENES: Record<string, () => React.JSX.Element> = {
   careerflux: CareerMatch,
-  'nexus-ai': NeuralNet,
-  'enterprise-ai-knowledge-model': KnowledgeGraph,
+  'nexus-ai': AiCopilot,
+  'enterprise-ai-knowledge-model': RagPipeline,
   'distributed-kv-store': ReplicaRing,
   medicare: Medication,
   'swagruha-food': FoodBowl,

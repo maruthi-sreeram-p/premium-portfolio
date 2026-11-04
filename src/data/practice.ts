@@ -1,10 +1,11 @@
 /**
- * Things built to learn with, rather than client or product work.
+ * Practice work: a learning site and two debugging laboratories, built to
+ * learn with rather than as client or product work.
  *
  * Every figure below comes from the project's own README or live site — nothing
  * is estimated. If a project changes, update the numbers here from the source.
  */
-export interface Lab {
+export interface PracticeItem {
   id: string;
   /** Short caption above the title. */
   kind: string;
@@ -19,7 +20,7 @@ export interface Lab {
   live?: string;
 }
 
-export const labs: Lab[] = [
+export const practice: PracticeItem[] = [
   {
     id: 'java-trail',
     kind: 'Learning platform',

@@ -42,26 +42,26 @@ export const journey: JourneyEntry[] = [
     title: 'Full-Stack Delivery',
     context: 'MediCare · Swagruha Food',
     description:
-      'Took backends all the way to shipped products. Led backend development on a prescription-tracking platform and built the storefront and services for an e-commerce application — connecting React front-ends to Spring Boot APIs and owning the integration between them.',
-    highlights: ['React', 'REST APIs', 'JWT', 'Integration'],
+      'Took backends toward shipped products. Led backend development in a four-person team on a prescription-tracking platform, and built the Spring Boot, Spring Security and MySQL foundation of a food-ordering backend.',
+    highlights: ['Spring Boot', 'Spring Security', 'JWT', 'MySQL'],
   },
   {
     id: 'distributed',
     period: 'Depth',
     title: 'Distributed & Event-Driven Systems',
-    context: 'Distributed KV Store · CareerFlux',
+    context: 'Raft Key-Value Store · CareerFlux',
     description:
-      'Went after the harder problems: a key-value store exploring replication, leader and follower behaviour, log-oriented design and fault tolerance from first principles, and an ingestion pipeline that runs on an in-process bus or Kafka with the same topics and handlers.',
-    highlights: ['Replication', 'Consensus', 'Apache Kafka', 'Event-driven design'],
+      'Went after the harder problems: a key-value store built on the Raft consensus algorithm, with leader election, log replication, durable storage and linearizable reads, and an ingestion pipeline that runs on an in-process bus or on Kafka with the same topics and handlers.',
+    highlights: ['Raft consensus', 'Log replication', 'Apache Kafka', 'Event-driven design'],
   },
   {
     id: 'ai',
     period: 'Current focus',
     title: 'Intelligent Systems',
-    context: 'Nexus AI · Enterprise Knowledge Model · CareerFlux',
+    context: 'Medicare Nexus AI · Enterprise AI Knowledge Base · CareerFlux',
     description:
-      'Building systems where knowledge, reasoning and application workflows work together — enterprise knowledge modelling and career intelligence with explainable matching, applied to real workflows rather than as demos.',
-    highlights: ['AI Systems', 'Knowledge Modelling', 'Career Intelligence'],
+      'Building systems where the AI is wrapped in code that can be checked — answers that cite the passages they came from, a medication assistant with safety guardrails, and career matching that explains every score.',
+    highlights: ['Retrieval-augmented answers', 'Spring AI', 'Explainable matching'],
     current: true,
   },
 ];

@@ -678,6 +678,143 @@
   vector-effect: non-scaling-stroke;
 }
 
+/* -- Pile ------------------------------------------------------------------
+   Practice cards, loosely stacked and tilted like a hand of cards on a desk.
+   Each card is positioned from custom properties set in Practice.tsx (a set
+   for phones, a set for wider screens). Under the pointer a card lifts out of
+   the pile. When one is opened (`data-open` on the pile) the others fade and
+   blur away, the pile shortens, and the chosen card moves to the top, centred
+   and straight. The pile's height is derived from its container's width
+   (`cqw`) so that it can be transitioned. */
+.pile-wrap {
+  container-type: inline-size;
+  width: 100%;
+  max-width: 920px;
+  margin-inline: auto;
+}
+.pile {
+  position: relative;
+  height: calc(100cqw / 1.09);
+  transition: height 700ms var(--ease-out-quint);
+}
+.pile[data-open] {
+  height: calc(100cqw / 2.3);
+}
+@media (min-width: 640px) {
+  .pile {
+    height: calc(100cqw / 1.59);
+  }
+  .pile[data-open] {
+    height: calc(100cqw / 3.05);
+  }
+}
+
+.pile-card {
+  position: absolute;
+  left: var(--l-sm);
+  top: var(--t-sm);
+  width: var(--w-sm);
+  aspect-ratio: 1.55;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  padding: clamp(0.7rem, 2.4vw, 1.25rem);
+  border-radius: 14px;
+  overflow: hidden;
+  cursor: pointer;
+  text-align: left;
+  transform: rotate(var(--r));
+  box-shadow: 0 22px 36px -22px rgba(0, 0, 0, 0.8);
+  transition:
+    left 700ms var(--ease-out-quint),
+    top 700ms var(--ease-out-quint),
+    transform 700ms var(--ease-out-quint),
+    opacity 450ms var(--ease-out-quint),
+    filter 450ms var(--ease-out-quint),
+    box-shadow 600ms var(--ease-out-quint),
+    border-color 300ms var(--ease-out-quint);
+}
+@media (min-width: 640px) {
+  .pile-card {
+    left: var(--l);
+    top: var(--t);
+    width: var(--w);
+  }
+}
+.pile:not([data-open]) .pile-card:hover,
+.pile:not([data-open]) .pile-card:focus-visible {
+  z-index: 10;
+  border-color: var(--rule-strong);
+  transform: translateY(-5%) rotate(calc(var(--r) * 0.35)) scale(1.03);
+  box-shadow: 0 34px 50px -24px rgba(0, 0, 0, 0.9);
+}
+
+/* Opened: the chosen card goes to the top, centred and straight... */
+.pile[data-open] .pile-card[data-selected] {
+  z-index: 10;
+  left: calc(50% - var(--w-sm) / 2);
+  top: 0;
+  transform: rotate(0deg) scale(1.04);
+  transform-origin: center top;
+  cursor: default;
+  border-color: var(--rule-strong);
+  box-shadow: 0 34px 50px -24px rgba(0, 0, 0, 0.9);
+}
+@media (min-width: 640px) {
+  .pile[data-open] .pile-card[data-selected] {
+    left: calc(50% - var(--w) / 2);
+  }
+}
+/* ...and the rest drop back and out of focus. */
+.pile[data-open] .pile-card:not([data-selected]) {
+  opacity: 0;
+  filter: blur(6px);
+  pointer-events: none;
+  transform: rotate(var(--r)) scale(0.94);
+}
+
+.pile-glyph {
+  position: absolute;
+  right: 6%;
+  top: 14%;
+  width: 42%;
+  height: auto;
+  stroke-width: 1.1;
+  color: var(--fg);
+  opacity: 0.12;
+}
+
+.pile-pin-slot,
+.pile-clip-slot {
+  position: absolute;
+  z-index: 20;
+  pointer-events: none;
+  color: var(--fg);
+  transition: opacity 400ms var(--ease-out-quint);
+}
+.pile-pin-slot {
+  left: 2%;
+  top: 0;
+  width: clamp(1.6rem, 6vw, 2.6rem);
+  transform: rotate(-8deg);
+}
+.pile-clip-slot {
+  left: 68%;
+  top: 78%;
+  width: clamp(1.6rem, 6vw, 2.8rem);
+  transform: rotate(6deg);
+}
+.pile[data-open] .pile-pin-slot,
+.pile[data-open] .pile-clip-slot {
+  opacity: 0;
+}
+.pile-pin,
+.pile-clip {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
 /* -- Map tiles -------------------------------------------------------------
    The ground of a project card's stage: a field of rounded squares, like city
    blocks seen from above. The shape is a mask over a flat foreground tint, so

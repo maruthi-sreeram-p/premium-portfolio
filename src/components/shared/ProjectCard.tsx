@@ -5,6 +5,7 @@ import { useTilt } from '../../hooks/useTilt';
 import { GithubIcon } from './SocialIcons';
 import ArchitectureFlow from './ArchitectureFlow';
 import CardReveal from '../fx/CardReveal';
+import ProjectArt from './ProjectArt';
 
 interface ProjectCardProps {
   project: Project;
@@ -33,14 +34,14 @@ const MAX_TECH = 4;
 const MAX_FLOW = 3;
 
 /**
- * A project card, laid out in three bands.
+ * A project card: a stage, the text, and a footer.
  *
- *   header — a status dot and the category, with the flagship pill when earned
- *   stage  — a tiled "map" ground with two small cards floating on it: the
- *            project's request path, and the role played on it
+ *   stage  — runs to the top edge, with a flagship pill on its corner: a
+ *            drawn scene for the project, and two small cards floating on it —
+ *            the request path, and the role played on it
  *   footer — the stack, as a row of labels, and the repo / live links
  *
- * Between the header and the footer sits the text a card needs: title,
+ * Between the stage and the footer sits the text a card needs: title,
  * subtitle and a two-line approach.
  *
  * **Every card is structurally identical.** The projects themselves are not —
@@ -61,8 +62,8 @@ export default function ProjectCard({
   primary = true,
 }: ProjectCardProps) {
   // The card turns toward the pointer and lifts a little. Fine-pointer devices
-  // only (the hook checks). It also feeds the dot grid that lights up under it.
-  const tiltRef = useTilt<HTMLDivElement>({ max: 8, lift: 14, trackSpotlight: true });
+  // only (the hook checks).
+  const tiltRef = useTilt<HTMLDivElement>({ max: 8, lift: 14, trackSpotlight: false });
   const accent = `var(--${project.accent})`;
   const isFlagship = project.priority === 'flagship';
 
@@ -74,7 +75,7 @@ export default function ProjectCard({
   const extraFlow = flowNodes.length - shownFlow.nodes.length;
 
   const shellClass =
-    'surface dot-reveal absolute inset-0 -z-10 transition-colors duration-300 group-hover:border-[var(--rule-strong)]';
+    'surface absolute inset-0 -z-10 transition-colors duration-300 group-hover:border-[var(--rule-strong)]';
 
   return (
     <article className="tilt-scene h-full">
@@ -98,81 +99,38 @@ export default function ProjectCard({
             <span aria-hidden="true" className={shellClass} style={{ borderRadius: 12 }} />
           )}
 
-          {/* Header band */}
-          <div
-            className="relative flex h-12 items-center justify-between gap-4 border-b px-5 sm:px-6"
-            style={{ borderColor: 'var(--rule)' }}
-          >
-            <p className="label flex min-w-0 items-center gap-2.5 truncate">
-              <span
-                aria-hidden="true"
-                className="h-1.5 w-1.5 shrink-0 rounded-full"
-                style={{ background: accent, boxShadow: `0 0 8px ${accent}` }}
-              />
-              <span className="truncate">{project.category}</span>
-            </p>
-            {isFlagship && (
-              <span
-                className="label shrink-0 rounded-full border px-2 py-0.5 leading-none"
-                style={{
-                  borderColor: `color-mix(in srgb, ${accent} 40%, transparent)`,
-                  color: accent,
-                }}
-              >
-                Flagship
-              </span>
-            )}
-          </div>
+          {/* Flagship marker. The category label that used to head the card is
+              gone — the stage now runs to the top edge — so this sits on the
+              stage's corner instead. */}
+          {isFlagship && (
+            <span
+              className="label absolute right-4 top-4 z-[5] rounded-full border px-2 py-0.5 leading-none"
+              style={{
+                borderColor: `color-mix(in srgb, ${accent} 40%, transparent)`,
+                background: 'var(--card-solid)',
+                color: accent,
+              }}
+            >
+              Flagship
+            </span>
+          )}
 
-          {/* Stage — a tiled ground with two cards floating on it. On hover the
+          {/* Stage — artwork for the project, with two cards floating on it. On hover the
               cards drift apart and straighten, as if lifted off the surface. */}
           <div
-            className="relative h-[13rem] overflow-hidden border-b"
+            className="relative h-[16rem] overflow-hidden rounded-t-[12px] border-b"
             style={{ borderColor: 'var(--rule)' }}
             aria-hidden="true"
           >
-            <div className="map-tiles absolute inset-0" />
-            {/* Fades the tiles out toward the edges so the stage has no hard
+            <ProjectArt projectId={project.id} />
+            {/* Softens the artwork toward the edges so the stage has no hard
                 frame of its own. */}
             <div
               className="absolute inset-0"
               style={{
                 background:
-                  'radial-gradient(closest-side at 50% 50%, transparent 40%, var(--card-solid) 130%)',
+                  'radial-gradient(closest-side at 50% 50%, transparent 55%, var(--card-solid) 140%)',
               }}
-            />
-
-            {/* A dashed route between two waypoints, with a pin where it meets
-                the centre. */}
-            <svg
-              viewBox="0 0 300 184"
-              preserveAspectRatio="none"
-              className="absolute inset-0 h-full w-full"
-              fill="none"
-            >
-              <path
-                d="M 24 150 C 90 120, 130 40, 276 44"
-                stroke="var(--rule-strong)"
-                strokeWidth="1"
-                strokeDasharray="4 5"
-                vectorEffect="non-scaling-stroke"
-              />
-            </svg>
-            <span
-              className="absolute left-[8%] top-[78%] h-2 w-2 rounded-full"
-              style={{ background: accent, boxShadow: `0 0 10px ${accent}` }}
-            />
-            <span
-              className="absolute right-[7%] top-[22%] h-2 w-2 rounded-full"
-              style={{ background: accent, boxShadow: `0 0 10px ${accent}` }}
-            />
-            <span
-              className="absolute left-1/2 top-1/2 h-24 w-24 -translate-x-1/2 -translate-y-1/2 rounded-full border transition-transform duration-700 group-hover:scale-125"
-              style={{ borderColor: 'var(--rule)' }}
-            />
-            <span
-              className="absolute left-1/2 top-1/2 h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full"
-              style={{ background: accent, boxShadow: `0 0 18px 2px ${accent}` }}
             />
 
             {/* Floating card: the request path */}

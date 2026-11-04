@@ -109,7 +109,7 @@ export default function Projects({ onOpenChange }: ProjectsProps) {
             <SectionHeading
               eyebrow="03 — Selected work"
               title="Projects"
-              lead="Seven completed builds across backend services, distributed systems and intelligent applications. Open any card for the problem, the architecture and what I actually did."
+              lead="Seven builds across backend services, distributed systems and AI-assisted systems. Open any card for the problem, the architecture and what I actually did."
               aside={
                 <p className="label">
                   <span className="text-[var(--fg)]">{visible.length}</span>
