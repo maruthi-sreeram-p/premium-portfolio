@@ -34,10 +34,12 @@ function ServiceCard({ service, index }: { service: Service; index: number }) {
 
   return (
     <Reveal as="li" delay={index * 0.08} tilt className="h-full">
-      <article className="surface relative flex h-full flex-col overflow-hidden rounded-lg p-6 sm:p-7">
+      {/* Hover: the card lifts, its border brightens, a band of light sweeps
+          across it once and the accent edge draws in from the left. */}
+      <article className="surface sweep group relative flex h-full flex-col overflow-hidden rounded-lg p-6 transition-[transform,border-color] duration-500 ease-[var(--ease-out-quint)] hover:-translate-y-1.5 hover:border-[var(--rule-strong)] sm:p-7">
         <span
           aria-hidden="true"
-          className="absolute inset-x-0 top-0 h-px"
+          className="absolute inset-x-0 top-0 h-px origin-left scale-x-0 transition-transform duration-700 group-hover:scale-x-100"
           style={{ background: `linear-gradient(90deg, ${accent}, transparent)` }}
         />
 
@@ -53,7 +55,7 @@ function ServiceCard({ service, index }: { service: Service; index: number }) {
           {service.deliverables.map((item) => (
             <li key={item} className="flex gap-3 text-sm leading-relaxed text-[var(--fg)]">
               <Check
-                className="mt-0.5 h-4 w-4 shrink-0"
+                className="mt-0.5 h-4 w-4 shrink-0 transition-transform duration-500 group-hover:scale-125"
                 style={{ color: accent }}
                 aria-hidden="true"
               />

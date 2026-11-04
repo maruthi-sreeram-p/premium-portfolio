@@ -239,10 +239,15 @@
     almost indistinguishable and costs nothing.
   */
   .surface {
-    /* A faint top-down sheen over the flat fill — the one bit of depth. */
+    /* A faint top-down sheen over the flat fill — the one bit of depth.
+       The bottom layer is the page ground itself: --card is translucent, and
+       over a bare ground the cursor-lit dot grid shows straight through it and
+       runs across the text on the card. Layering it on --shell keeps the same
+       colour while making the card hide the grid. */
     background:
       linear-gradient(180deg, color-mix(in srgb, var(--fg) 3.5%, transparent), transparent 70%),
-      var(--card);
+      linear-gradient(var(--card), var(--card)),
+      var(--shell);
     border: 1px solid var(--card-border);
   }
 

@@ -106,10 +106,12 @@ export default function ProjectCard({
               style={{ borderRadius: 12 }}
             />
           )}
-          {/* Accent edge — the card's identity colour, lit on hover. */}
+          {/* Accent edge — the card's identity colour, lit on hover. Inset by the
+              card's 12px corner radius so it sits on the straight part of the
+              top edge instead of overshooting the curve. */}
           <span
             aria-hidden="true"
-            className="absolute inset-x-0 top-0 h-px origin-left scale-x-0 transition-transform duration-700 group-hover:scale-x-100"
+            className="absolute inset-x-3 top-0 h-px origin-left scale-x-0 transition-transform duration-700 group-hover:scale-x-100"
             style={{ background: `linear-gradient(90deg, ${accent}, transparent)` }}
           />
 

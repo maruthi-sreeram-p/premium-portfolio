@@ -18,8 +18,6 @@ export default function Header({ theme, onToggleTheme }: HeaderProps) {
   const [scrolled, setScrolled] = useState(false);
   const [active, setActive] = useState<string>('');
   const [mobileOpen, setMobileOpen] = useState(false);
-  const progressRef = useRef<HTMLSpanElement>(null);
-  const { prefersReducedMotion } = useDeviceTier();
 
   /* -- Condensed state --------------------------------------------------- */
   useEffect(() => {
@@ -54,30 +52,6 @@ export default function Header({ theme, onToggleTheme }: HeaderProps) {
     sections.forEach((section) => observer.observe(section));
     return () => observer.disconnect();
   }, []);
-
-  /* -- Reading progress --------------------------------------------------- */
-  useEffect(() => {
-    const bar = progressRef.current;
-    if (!bar || prefersReducedMotion) return;
-
-    const ctx = gsap.context(() => {
-      gsap.fromTo(
-        bar,
-        { scaleX: 0 },
-        {
-          scaleX: 1,
-          ease: 'none',
-          scrollTrigger: {
-            trigger: document.body,
-            start: 'top top',
-            end: 'bottom bottom',
-            scrub: 0.3,
-          },
-        },
-      );
-    });
-    return () => ctx.revert();
-  }, [prefersReducedMotion]);
 
   return (
     <>
@@ -187,17 +161,6 @@ export default function Header({ theme, onToggleTheme }: HeaderProps) {
             </button>
           </div>
         </Container>
-
-        {/* Reading progress */}
-        <span
-          ref={progressRef}
-          aria-hidden="true"
-          className="absolute inset-x-0 bottom-0 h-px origin-left"
-          style={{
-            background: 'linear-gradient(90deg, var(--accent), var(--accent-3), var(--accent-2))',
-            transform: 'scaleX(0)',
-          }}
-        />
       </header>
 
       <MobileMenu isOpen={mobileOpen} onClose={() => setMobileOpen(false)} active={active} />

@@ -6,6 +6,8 @@ import { damp } from '../../lib/motion';
 const SPACING = 30;
 /** How far from the pointer the grid is still visible. */
 const RADIUS = 260;
+/** Brightest a dot gets, directly under the pointer. */
+const PEAK_ALPHA = 0.42;
 /** Diameter of the soft lift under the pointer. */
 const GLOW = 620;
 
@@ -117,11 +119,13 @@ export default function Backdrop() {
           if (t <= 0) continue;
           // Smoothstep: the edge of the light is soft, the centre is crisp.
           const falloff = t * t * (3 - 2 * t);
-          const alpha = falloff * 0.9 * level;
+          // Capped well below full white: text sits on top of this layer, and
+          // at full strength the grid competes with it.
+          const alpha = falloff * PEAK_ALPHA * level;
           if (alpha < 0.01) continue;
           ctx.globalAlpha = alpha;
           ctx.beginPath();
-          ctx.arc(px, py, 0.9 + falloff * 0.9, 0, Math.PI * 2);
+          ctx.arc(px, py, 0.8 + falloff * 0.6, 0, Math.PI * 2);
           ctx.fill();
         }
       }
@@ -151,7 +155,7 @@ export default function Backdrop() {
           width: GLOW,
           height: GLOW,
           background:
-            'radial-gradient(closest-side, color-mix(in srgb, var(--fg) 6%, transparent), transparent)',
+            'radial-gradient(closest-side, color-mix(in srgb, var(--fg) 3.5%, transparent), transparent)',
           willChange: 'transform, opacity',
         }}
       />
