@@ -3,7 +3,7 @@ import { Download } from 'lucide-react';
 import { personal } from '../../data/personal';
 import Container from '../layout/Container';
 import Button from '../shared/Button';
-import SystemDiagram from '../fx/SystemDiagram';
+import LayerStack from '../fx/LayerStack';
 import TypeText from '../fx/TypeText';
 import { EASE_OUT_EXPO, EASE_OUT_QUINT } from '../../lib/motion';
 import { scrollToSection } from '../../lib/scroll';
@@ -177,7 +177,7 @@ export default function Hero({ ready }: HeroProps) {
             animate={ready ? { opacity: 1, x: 0 } : {}}
             transition={{ duration: 0.9, delay: 0.55, ease: EASE_OUT_EXPO }}
           >
-            <SystemDiagram ready={ready} />
+            <LayerStack ready={ready} />
           </motion.div>
         </div>
       </Container>

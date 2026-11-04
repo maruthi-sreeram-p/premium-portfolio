@@ -340,6 +340,172 @@
 }
 
 /* ============================================================================
+   LAYER STACK (hero) — see components/fx/LayerStack.tsx. Cycle is 4.6s; the
+   request falls for 2.6s of it (56.5%) from z=170 to z=-150.
+   ========================================================================== */
+.ls-plate {
+  border: 1px solid var(--rule-strong);
+  border-radius: 14px;
+  background:
+    radial-gradient(circle, color-mix(in srgb, var(--fg) 16%, transparent) 1px, transparent 1.3px) 0 0 / 18px 18px,
+    color-mix(in srgb, var(--fg) 4%, transparent);
+  box-shadow: 0 26px 50px -24px rgba(0, 0, 0, 0.7);
+  opacity: 0;
+}
+.ls-plate[data-focus] {
+  border-color: color-mix(in srgb, var(--accent) 45%, transparent);
+  background:
+    radial-gradient(circle, color-mix(in srgb, var(--fg) 22%, transparent) 1px, transparent 1.3px) 0 0 / 18px 18px,
+    color-mix(in srgb, var(--fg) 7%, transparent);
+}
+
+.ls-node {
+  transform: translate(-50%, -50%);
+  border: 1px solid var(--rule-strong);
+  border-radius: 5px;
+  background: color-mix(in srgb, var(--fg) 6%, transparent);
+}
+
+/* The plate's edge catches light as the request passes through it. */
+.ls-lit {
+  border-radius: inherit;
+  border: 1px solid var(--accent);
+  box-shadow:
+    0 0 22px color-mix(in srgb, var(--accent) 35%, transparent),
+    inset 0 0 26px color-mix(in srgb, var(--accent) 14%, transparent);
+  opacity: 0;
+  animation: ls-lit 4.6s linear infinite;
+}
+
+.ls-ripple {
+  left: 50%;
+  top: 50%;
+  width: 56px;
+  height: 56px;
+  margin: -28px 0 0 -28px;
+  border-radius: 50%;
+  border: 1px solid var(--accent);
+  opacity: 0;
+  animation: ls-ripple 4.6s ease-out infinite;
+}
+
+.ls-post,
+.ls-beam {
+  width: 1px;
+}
+.ls-post {
+  background: linear-gradient(to bottom, transparent, var(--rule-strong), transparent);
+}
+.ls-beam {
+  width: 2px;
+  background: linear-gradient(
+    to bottom,
+    transparent,
+    color-mix(in srgb, var(--accent) 38%, transparent) 20%,
+    color-mix(in srgb, var(--accent) 38%, transparent) 80%,
+    transparent
+  );
+}
+
+.ls-leader {
+  height: 1px;
+  background: linear-gradient(90deg, var(--rule-strong), transparent);
+  opacity: 0;
+  animation: ls-fade 0.9s var(--ease-out-expo) both;
+}
+
+.ls-label {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 34px;
+  white-space: nowrap;
+  opacity: 0;
+  animation: ls-fade 0.9s var(--ease-out-expo) both;
+}
+.ls-label-name {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  line-height: 1.3;
+  color: var(--fg-soft);
+}
+.ls-label-note {
+  font-size: 0.6875rem;
+  letter-spacing: 0.03em;
+  line-height: 1.3;
+  color: var(--fg-faint);
+}
+.ls-label[data-focus] .ls-label-name {
+  color: var(--fg);
+}
+
+/* The request: a small glowing point with a short tail above it, billboarded. */
+.ls-packet {
+  left: -5px;
+  top: -5px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 14px 2px color-mix(in srgb, var(--accent) 70%, transparent);
+  opacity: 0;
+  animation: ls-fall 4.6s linear infinite;
+}
+.ls-packet::before {
+  content: "";
+  position: absolute;
+  bottom: 60%;
+  left: 4px;
+  width: 2px;
+  height: 46px;
+  background: linear-gradient(to top, color-mix(in srgb, var(--accent) 80%, transparent), transparent);
+}
+
+.ls-layer-in {
+  animation: ls-layer-in 1s var(--ease-out-expo) both;
+}
+.ls-layer-in > .ls-plate {
+  animation: ls-fade 0.9s var(--ease-out-expo) both;
+}
+
+@keyframes ls-layer-in {
+  from { translate: 0 0 -70px; }
+  to { translate: 0 0 0; }
+}
+@keyframes ls-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes ls-fall {
+  0% {
+    opacity: 0;
+    transform: translateZ(170px) rotateZ(calc(38deg - var(--px, 0deg))) rotateX(calc(-58deg - var(--py, 0deg)));
+  }
+  3% { opacity: 1; }
+  56.5% {
+    opacity: 1;
+    transform: translateZ(-150px) rotateZ(calc(38deg - var(--px, 0deg))) rotateX(calc(-58deg - var(--py, 0deg)));
+  }
+  60%, 100% {
+    opacity: 0;
+    transform: translateZ(-150px) rotateZ(calc(38deg - var(--px, 0deg))) rotateX(calc(-58deg - var(--py, 0deg)));
+  }
+}
+@keyframes ls-lit {
+  0% { opacity: 0; }
+  1.5% { opacity: 1; }
+  16%, 100% { opacity: 0; }
+}
+@keyframes ls-ripple {
+  0% { opacity: 0; transform: scale(0.3); }
+  1.5% { opacity: 0.9; }
+  16% { opacity: 0; transform: scale(3.6); }
+  100% { opacity: 0; transform: scale(3.6); }
+}
+
+/* ============================================================================
    INTERACTION EFFECTS
    ========================================================================== */
 
