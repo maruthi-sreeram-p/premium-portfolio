@@ -148,14 +148,14 @@ export default function LayerStack({ ready }: LayerStackProps) {
       >
         <div
           ref={stageRef}
-          className="absolute"
+          className={`absolute ${animate ? 'ls-alive' : ''}`}
           style={{
             left: CX,
             top: CY,
             width: 0,
             height: 0,
             transformStyle: 'preserve-3d',
-            transform: `rotateX(calc(${TILT}deg + var(--py, 0deg))) rotateZ(calc(${-SPIN}deg + var(--px, 0deg)))`,
+            transform: `rotateX(calc(${TILT}deg + var(--py, 0deg))) rotateZ(calc(${-SPIN}deg + var(--px, 0deg) + var(--sway, 0deg)))`,
           }}
         >
           {/* Corner posts — they make the plates read as a stack, not a pile. */}
@@ -194,7 +194,7 @@ export default function LayerStack({ ready }: LayerStackProps) {
                 className={`absolute left-0 top-0 ${ready ? 'ls-layer-in' : ''}`}
                 style={{
                   transformStyle: 'preserve-3d',
-                  transform: `translateZ(${layerZ(i)}px)`,
+                  transform: `translateZ(calc(${layerZ(i)}px * (1 + var(--spread, 0))))`,
                   animationDelay: enter,
                 }}
               >
@@ -237,7 +237,7 @@ export default function LayerStack({ ready }: LayerStackProps) {
                     top: EDGE * Math.sin(rad(SPIN)),
                     width: LEAD_LINE,
                     transformOrigin: '0 0',
-                    transform: `rotateZ(calc(${SPIN}deg - var(--px, 0deg)))`,
+                    transform: `rotateZ(calc(${SPIN}deg - var(--px, 0deg) - var(--sway, 0deg)))`,
                     animationDelay: enter,
                   }}
                 />
@@ -250,7 +250,7 @@ export default function LayerStack({ ready }: LayerStackProps) {
                     left: LABEL_D * Math.cos(rad(SPIN)),
                     top: LABEL_D * Math.sin(rad(SPIN)) - 17,
                     transformOrigin: '0 17px',
-                    transform: `rotateZ(calc(${SPIN}deg - var(--px, 0deg))) rotateX(calc(${-TILT}deg - var(--py, 0deg)))`,
+                    transform: `rotateZ(calc(${SPIN}deg - var(--px, 0deg) - var(--sway, 0deg))) rotateX(calc(${-TILT}deg - var(--py, 0deg)))`,
                     animationDelay: `${0.35 + i * 0.12}s`,
                   }}
                 >

@@ -121,7 +121,7 @@ export default function Services() {
   return (
     <SectionWrapper id="services" ariaLabel="Services">
       <SectionHeading
-        eyebrow="05 — Services"
+        eyebrow="06 — Services"
         title="Work with me"
         lead="Java backends and full-stack web apps for startups and small businesses — scoped up front, built in short cycles and delivered with documentation."
         aside={

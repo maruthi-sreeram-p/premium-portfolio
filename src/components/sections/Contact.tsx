@@ -113,7 +113,7 @@ export default function Contact() {
   return (
     <SectionWrapper id="contact" ariaLabel="Contact">
       <Reveal>
-        <p className="label eyebrow">06 — Contact</p>
+        <p className="label eyebrow">07 — Contact</p>
       </Reveal>
 
       <h2

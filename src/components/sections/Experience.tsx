@@ -66,7 +66,7 @@ export default function Experience() {
   return (
     <SectionWrapper id="experience" ariaLabel="Experience and journey">
       <SectionHeading
-        eyebrow="04 — Journey"
+        eyebrow="05 — Journey"
         title="The Path"
         lead="How the work has progressed — from language fundamentals to systems that have to stay correct when something fails."
       />

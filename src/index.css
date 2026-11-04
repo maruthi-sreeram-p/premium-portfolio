@@ -470,6 +470,40 @@
   animation: ls-fade 0.9s var(--ease-out-expo) both;
 }
 
+/* Idle life: the stack sways side to side, floats, and slowly breathes apart
+   and back together. Registered so the browser can interpolate them; the
+   transforms in LayerStack read them (and cancel them out for labels). */
+@property --sway {
+  syntax: "<angle>";
+  inherits: true;
+  initial-value: 0deg;
+}
+@property --spread {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0;
+}
+
+.ls-alive {
+  animation:
+    ls-sway 11s ease-in-out infinite alternate,
+    ls-breathe 6.5s ease-in-out infinite alternate,
+    ls-float 7s ease-in-out infinite alternate;
+}
+
+@keyframes ls-sway {
+  from { --sway: -9deg; }
+  to { --sway: 9deg; }
+}
+@keyframes ls-breathe {
+  from { --spread: -0.06; }
+  to { --spread: 0.14; }
+}
+@keyframes ls-float {
+  from { translate: 0 -10px; }
+  to { translate: 0 8px; }
+}
+
 @keyframes ls-layer-in {
   from { translate: 0 0 -70px; }
   to { translate: 0 0 0; }
@@ -481,16 +515,16 @@
 @keyframes ls-fall {
   0% {
     opacity: 0;
-    transform: translateZ(170px) rotateZ(calc(38deg - var(--px, 0deg))) rotateX(calc(-58deg - var(--py, 0deg)));
+    transform: translateZ(170px) rotateZ(calc(38deg - var(--px, 0deg) - var(--sway, 0deg))) rotateX(calc(-58deg - var(--py, 0deg)));
   }
   3% { opacity: 1; }
   56.5% {
     opacity: 1;
-    transform: translateZ(-150px) rotateZ(calc(38deg - var(--px, 0deg))) rotateX(calc(-58deg - var(--py, 0deg)));
+    transform: translateZ(-150px) rotateZ(calc(38deg - var(--px, 0deg) - var(--sway, 0deg))) rotateX(calc(-58deg - var(--py, 0deg)));
   }
   60%, 100% {
     opacity: 0;
-    transform: translateZ(-150px) rotateZ(calc(38deg - var(--px, 0deg))) rotateX(calc(-58deg - var(--py, 0deg)));
+    transform: translateZ(-150px) rotateZ(calc(38deg - var(--px, 0deg) - var(--sway, 0deg))) rotateX(calc(-58deg - var(--py, 0deg)));
   }
 }
 @keyframes ls-lit {
